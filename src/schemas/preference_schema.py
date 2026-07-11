@@ -15,8 +15,3 @@ class UserPreferences(BaseModel):
     height_cm: int | None = Field(default=None, gt=0, le=260)
     weight_kg: int | None = Field(default=None, gt=0, le=300)
     available_tools: list[str] = Field(default_factory=list)
-    passion_note: str | None = Field(
-        default=None,
-        max_length=280,
-        description="What the user is passionate about cooking right now: a rivalry dish, a family favorite, a match-day snack.",
-    )

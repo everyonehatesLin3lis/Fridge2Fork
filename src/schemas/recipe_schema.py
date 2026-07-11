@@ -33,10 +33,6 @@ class RecipeCandidate(BaseModel):
     missing_ingredients: list[str] = Field(default_factory=list)
     steps: list[str] = Field(min_length=1)
     food_waste_note: str
-    passion_line: str | None = Field(
-        default=None,
-        description="One sentence tying this recipe back to the user's stated passion_note, when provided.",
-    )
 
 
 class RankedRecipe(BaseModel):
@@ -64,5 +60,4 @@ class FinalRecipe(BaseModel):
     nutrition: NutritionEstimate
     goal_fit: str
     food_waste_note: str
-    passion_line: str | None = None
     safety_warnings: list[str] = Field(default_factory=list)
