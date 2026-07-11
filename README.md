@@ -6,6 +6,32 @@ It helps a user upload up to five fridge or food photos, review detected ingredi
 
 FridgeAgent is not one big recipe prompt. It is a four-agent workflow where each Gemma-powered agent handles a bounded part of the cooking decision process: vision and ingredient verification, user constraints, RAG-grounded recipe planning with portion math and rough nutrition, and final safety-checked recipe writing.
 
+## DEV Weekend Challenge: Passion Edition
+
+This existing project is the base for a new, weekend-scoped feature built for the
+[DEV Weekend Challenge: Passion Edition](https://dev.to). FridgeAgent already reduces food
+waste by turning what is actually in someone's fridge into a real recipe, so the
+Passion Edition addition leans into the emotional side of that: **Passion Mode**.
+
+- A new optional "What are you passionate about cooking right now?" field lets a user
+  describe a rivalry dish, a family recipe, or a World Cup match-day snack.
+- That note flows through the Constraints Agent (validated and trimmed), into the
+  Recipe Planner Agent (used as recipe theming context for both the deterministic
+  planner and the local/live LLM prompt), and onto the final recipe card as a
+  one-sentence `passion_line` that ties the dish back to what the user is passionate about.
+- See [`src/agents/recipe_planner_agent.py`](src/agents/recipe_planner_agent.py) for
+  `_passion_prompt_block`, `_passion_line`, and `_apply_passion_lines`, and
+  [`tests/test_passion_feature.py`](tests/test_passion_feature.py) for coverage.
+- For the **Best Use of Google AI** prize category, `GemmaClient` now supports
+  `APP_MODE=google`, which routes text and image prompts through the real Gemini API
+  using the current `google-genai` SDK (see [`src/services/gemma_client.py`](src/services/gemma_client.py)
+  and [`tests/test_google_ai_client.py`](tests/test_google_ai_client.py)).
+
+Disclosure: the four-agent fridge-to-recipe core (vision, constraints, recipe planning,
+final recipe writing) predates this challenge and was originally built for a different
+challenge submission. Passion Mode and the Google AI live provider above are new work
+built specifically within the July 10-13, 2026 challenge window.
+
 ## Why Gemma 4
 
 Gemma 4 fits this project because the task is naturally multimodal and constraint-heavy. The system needs to understand a fridge image, turn visible food into structured ingredients, reason over allergies and cooking goals, and produce practical recipes with minimal missing items.
@@ -61,6 +87,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 
 - `APP_MODE=mock`: deterministic text/demo flow, no paid API calls. Mock mode does not inspect uploaded images; type confirmed ingredients for demos.
 - `APP_MODE=local`: calls a local Ollama-compatible model through `src/services/gemma_client.py`.
+- `APP_MODE=google`: calls the real Google AI (Gemini) API through the `google-genai` SDK. Set `GOOGLE_API_KEY` (from [aistudio.google.com/apikey](https://aistudio.google.com/apikey)) and optionally `GOOGLE_MODEL_NAME` (default `gemini-2.0-flash`). Built for the Best Use of Google AI prize category.
 - `APP_MODE=live`: routes calls through `src/services/gemma_client.py`. Provider-specific API wiring can be added there without touching agent files.
 
 ## Recipe RAG

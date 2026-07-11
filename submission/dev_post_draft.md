@@ -1,50 +1,48 @@
-# Hermes Agent Challenge Submission Draft
+# Weekend Challenge: Passion Edition Submission Draft
 
-I built Fridge2Fork because recipe generation often fails at the most human part
-of cooking: knowing whether the dish can actually be made from what is in front
-of you.
+Tags: #weekendchallenge
 
-Fridge2Fork is a local fridge-to-recipe assistant. A user can upload up to five
-fridge or food photos, or type confirmed ingredients manually. The app verifies
-ingredients, applies constraints like allergies and cooking time, searches a
-local Kaggle recipe RAG index, calculates portions, and produces practical
-recipe cards with measurable ingredient amounts and concrete cooking steps.
+## What I built
 
-The app has four specialist agents:
+FridgeAgent already does something I care about: it turns whatever is actually sitting
+in your fridge into a real, cookable recipe instead of another generic AI recipe. For
+Passion Edition, I added **Passion Mode** on top of that base.
 
-1. Vision Agent: detects and merges ingredients from up to five photos.
-2. Constraints Agent: normalizes goals, allergies, portions, time, tools, and nutrition context.
-3. Recipe Planner Agent: retrieves recipe references, calculates portions, validates feasibility, and ranks rough nutrition.
-4. Final Recipe Agent: filters unsafe recipes and writes final cards.
+You can now tell FridgeAgent what you're passionate about cooking right now: a rivalry
+dish, a family recipe you're trying to nail, or a match-day snack for when your team
+plays. That note flows through the full four-agent workflow and comes back as a short,
+personal line on every recipe card tying the dish back to what you said you cared about.
 
-Hermes appears in two layers:
+With the World Cup going on, I kept picturing someone standing in front of an open
+fridge an hour before kickoff, half-watching the pre-game show, trying to figure out
+what to cook with three ingredients and a lot of nervous energy. Passion Mode is built
+for that moment.
 
-- `HermesOrchestrator` is the deterministic in-app messenger. It prevents loops
-  and keeps the workflow bounded.
-- The real Nous Research Hermes Agent is used as an external audit layer. The app
-  can call `hermes chat -Q -q` with the generated workflow JSON and project
-  context files so Hermes Agent can critique feasibility, portions, allergy
-  safety, missing binders/bases, and bad cooking steps.
+## What's new for this challenge
 
-The most important lesson was that recipe generation needs a critic. Without a
-validator, an AI can produce things like “cut yogurt into pieces” or “make a pie”
-without a binder or base. The Hermes Agent audit step gives the project an
-agentic review pass that asks: can this actually be cooked?
+- A "What are you passionate about cooking right now?" input in the Streamlit UI.
+- `passion_note` added to the validated user preference schema.
+- The Recipe Planner Agent uses the note as theming context for both the deterministic
+  planner and the local/live LLM prompt, and a `passion_line` field is guaranteed on
+  every recipe (deterministic backstop even if the LLM omits it).
+- The Final Recipe Agent carries `passion_line` through to the user-facing card.
+- **Best Use of Google AI**: `GemmaClient` gained a real `APP_MODE=google` provider
+  using the current `google-genai` SDK against the Gemini API, alongside the existing
+  mock and local Ollama modes.
+- New tests for schema validation, the passion pipeline, and the Google AI client's
+  success and failure paths.
 
-What is original here:
+## Disclosure
 
-- multi-photo ingredient detection and merge
-- Hermes-controlled four-agent workflow
-- Kaggle recipe dataset transformed into local RAG
-- deterministic feasibility checker inside planning
-- external Hermes Agent audit for final workflow review
-- portion-aware recipe cards with grams, counts, and nutrition context
+The base project (fridge photo upload, four-agent workflow, recipe RAG, Hermes
+orchestration) predates this challenge and was originally built for a separate
+challenge submission. Everything listed above under "What's new for this challenge"
+was designed and built within the July 10-13, 2026 challenge window on top of that
+existing base, per the "riffing on prior work" allowance in the challenge FAQ.
 
-Limitations:
+## Demo
 
-- nutrition is approximate, not medical advice
-- local image quality depends on the configured model
-- Hermes Agent audit requires the external `hermes` CLI to be installed and configured
-- RAG uses a compact local index sample for speed
+See `submission/demo_script.md` for the walkthrough: type a passion note, generate
+recipes, and see the personal line on each card.
 
-Repo link: TODO
+Repo link: https://github.com/everyonehatesLin3lis/Fridge2Fork
