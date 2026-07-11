@@ -1,0 +1,27 @@
+{
+  "status": "unavailable",
+  "used_hermes_agent": false,
+  "summary": "Hermes Agent CLI was not found on PATH.",
+  "issues": [
+    {
+      "severity": "medium",
+      "recipe": "workflow",
+      "issue": "The external Hermes Agent audit could not run because the `hermes` command is not installed or configured.",
+      "fix": "Install Hermes Agent, run `hermes setup`, then retry the audit."
+    }
+  ],
+  "recommended_changes": [
+    "Install Hermes Agent from the official Nous Research quickstart.",
+    "Run `hermes chat -Q -q \"hello\"` once in the terminal to confirm setup."
+  ],
+  "local_fallback_audit": {
+    "status": "pass",
+    "summary": "Local fallback audit completed without Hermes Agent.",
+    "issues": [],
+    "recommended_changes": [
+      "Use Hermes Agent CLI for the official agentic audit layer.",
+      "Keep the deterministic fallback as a safety net inside the app."
+    ]
+  },
+  "command": "hermes chat -Q -q <audit prompt>"
+}
