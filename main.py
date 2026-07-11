@@ -71,8 +71,6 @@ def render_recipe_cards(result: object) -> None:
     for recipe in result.final_recipes:
         with st.container(border=True):
             st.markdown(f"### {recipe.title}")
-            if recipe.passion_line:
-                st.markdown(f"*{recipe.passion_line}*")
             st.write(
                 f"**Portions:** {recipe.portions} | "
                 f"**Prep:** {recipe.prep_time_minutes} min | "
@@ -185,11 +183,6 @@ edited_ingredients = st.text_area(
 
 st.subheader("Preferences")
 with st.form("local_preferences"):
-    passion_note = st.text_input(
-        "What are you passionate about cooking right now?",
-        placeholder="e.g. my grandmother's garlic soup, or a match-day snack for when my team plays",
-        help="Optional. This colors the recipe theme and adds a personal line to each recipe card.",
-    )
     col_a, col_b = st.columns(2)
     with col_a:
         goal = st.selectbox("Cooking goal", ["quick", "healthy", "high_protein", "budget", "comfort_food"])
@@ -251,7 +244,6 @@ if submitted:
         "height_cm": height_cm or None,
         "weight_kg": weight_kg or None,
         "available_tools": tools,
-        "passion_note": passion_note.strip() or None,
     }
     confirmed_ingredients = [
         item.strip()
