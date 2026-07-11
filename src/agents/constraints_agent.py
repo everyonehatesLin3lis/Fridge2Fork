@@ -15,7 +15,18 @@ class ConstraintAgentResult(BaseModel):
 def run(raw_preferences: dict[str, Any]) -> ConstraintAgentResult:
     """Validate user preferences and surface planning constraints."""
     preferences = UserPreferences.model_validate(raw_preferences)
+    preferences = _normalize_passion_note(preferences)
     return ConstraintAgentResult(preferences=preferences, warnings=_constraint_warnings(preferences))
+
+
+def _normalize_passion_note(preferences: UserPreferences) -> UserPreferences:
+    """Trim the free-text passion note and drop it if it is blank after trimming."""
+    if preferences.passion_note is None:
+        return preferences
+    cleaned = preferences.passion_note.strip()
+    if cleaned == preferences.passion_note:
+        return preferences
+    return preferences.model_copy(update={"passion_note": cleaned or None})
 
 
 def _constraint_warnings(preferences: UserPreferences) -> list[str]:

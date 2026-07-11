@@ -37,6 +37,7 @@ def run(ranked_recipes: list[RankedRecipe], allergies: list[str]) -> FinalRecipe
             nutrition=recipe.ranked_recipe.nutrition,
             goal_fit=recipe.ranked_recipe.goal_fit,
             food_waste_note=recipe.ranked_recipe.candidate.food_waste_note,
+            passion_line=recipe.ranked_recipe.candidate.passion_line,
             safety_warnings=recipe.safety_warnings,
         )
         for recipe in safe_recipes

@@ -16,6 +16,7 @@ from src.utils.recipe_feasibility import validate_and_repair_recipe
 def run(ingredients: VerifiedIngredients, preferences: UserPreferences) -> tuple[list[RecipeCandidate], list[RankedRecipe]]:
     """Create practical recipes, calculate portions, and rank nutrition fit."""
     recipe_candidates = plan_recipes(ingredients, preferences)
+    recipe_candidates = _apply_passion_lines(recipe_candidates, preferences)
     ranked_recipes = rank_recipes(recipe_candidates, preferences)
     return recipe_candidates, ranked_recipes
 
@@ -48,6 +49,8 @@ Constraint check:
 Local recipe references retrieved from the Kaggle recipe dataset:
 {reference_context}
 
+{_passion_prompt_block(preferences)}
+
 Return only a JSON array. Each item must have exactly:
 {{
   "title": "recipe title",
@@ -66,7 +69,8 @@ Return only a JSON array. Each item must have exactly:
   ],
   "missing_ingredients": ["small pantry item if needed"],
   "steps": ["short practical step"],
-  "food_waste_note": "how this reduces waste"
+  "food_waste_note": "how this reduces waste",
+  "passion_line": "one warm sentence tying this recipe to the user's stated passion note, or null if none was given"
 }}
 
 Rules:
@@ -200,6 +204,35 @@ class MealPrefix:
             "snack": "Snack",
             "meal_prep": "Meal Prep",
         }.get(meal_type, "Quick")
+
+
+def _passion_prompt_block(preferences: UserPreferences) -> str:
+    if not preferences.passion_note:
+        return "The user did not share a passion note for this run."
+    return (
+        f'The user is passionate about: "{preferences.passion_note}". '
+        "Let it inspire the recipe theme, title, or plating idea without breaking allergy, "
+        "diet, or ingredient constraints."
+    )
+
+
+def _passion_line(preferences: UserPreferences, title: str) -> str | None:
+    """Deterministic backstop so a passion_line always appears when passion_note is set."""
+    note = preferences.passion_note
+    if not note:
+        return None
+    return f'Inspired by your passion for "{note}", this {title} brings that same energy to what is already in your fridge.'
+
+
+def _apply_passion_lines(recipes: list[RecipeCandidate], preferences: UserPreferences) -> list[RecipeCandidate]:
+    if not preferences.passion_note:
+        return recipes
+    return [
+        recipe if recipe.passion_line else recipe.model_copy(
+            update={"passion_line": _passion_line(preferences, recipe.title)}
+        )
+        for recipe in recipes
+    ]
 
 
 def _constraint_note(preferences: UserPreferences) -> str:
