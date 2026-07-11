@@ -632,6 +632,8 @@ The project is done when:
 - Tests pass
 - README explains setup and architecture
 - Submission post draft is ready
+- Each required change was committed on its own once verified (see "Commit
+  Discipline" in AGENTS.md), so the git log is a real, dated track of the work
 
 ## Codex Task Prompts
 
