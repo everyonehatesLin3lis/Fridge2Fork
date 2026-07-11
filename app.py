@@ -6,12 +6,15 @@ from datetime import datetime
 from typing import Any
 
 import streamlit as st
+from dotenv import load_dotenv
 
 from src.orchestrator import run_fridge_agent_workflow
 from src.services.gemma_client import GemmaClient
 from src.services.hermes_agent_audit import run_hermes_agent_audit
 
 
+# Load .env before applying defaults so APP_MODE from .env is respected.
+load_dotenv()
 os.environ.setdefault("APP_MODE", "mock")
 
 

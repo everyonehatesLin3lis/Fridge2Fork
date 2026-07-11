@@ -31,7 +31,7 @@ def plan_recipes(ingredients: VerifiedIngredients, preferences: UserPreferences)
         tools=preferences.available_tools,
         limit=3,
     )
-    if get_settings().app_mode == "local":
+    if get_settings().app_mode in {"local", "google"}:
         constraint_note = _constraint_note(preferences)
         reference_context = format_references_for_prompt(recipe_references)
         prompt = f"""

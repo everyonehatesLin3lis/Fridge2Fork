@@ -97,18 +97,15 @@ Return only JSON with this exact shape:
 Do not invent hidden ingredients. If unsure, use lower confidence and add the item to uncertain_items.
 Separate visible-object confidence from ingredient certainty by using lower confidence for unclear packages.
 """
-    if settings.app_mode == "local":
-        try:
-            return parse_json_response(GemmaClient().generate_from_image(image, prompt), IngredientExtractionResponse)
-        except (RuntimeError, ValueError):
-            return IngredientExtractionResponse(
-                ingredients=[],
-                uncertain_items=[
-                    "Local vision model could not parse the image. Confirm ingredients manually or retry with a clearer photo."
-                ],
-            )
-
-    return parse_json_response(GemmaClient().generate_from_image(image, prompt), IngredientExtractionResponse)
+    try:
+        return parse_json_response(GemmaClient().generate_from_image(image, prompt), IngredientExtractionResponse)
+    except (RuntimeError, ValueError):
+        return IngredientExtractionResponse(
+            ingredients=[],
+            uncertain_items=[
+                "The vision model could not parse the image. Confirm ingredients manually or retry with a clearer photo."
+            ],
+        )
 
 
 def _as_image_list(image: Any) -> list[Any]:
@@ -153,7 +150,7 @@ def _verify(detected: IngredientExtractionResponse) -> VerifiedIngredients:
     cleaned = []
     questions = [
         item
-        if item.lower().startswith(("mock mode", "local vision model"))
+        if item.lower().startswith(("mock mode", "the vision model"))
         else f"I detected {item}. What is it?"
         for item in detected.uncertain_items
     ]
