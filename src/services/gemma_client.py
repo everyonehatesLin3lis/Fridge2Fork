@@ -22,6 +22,8 @@ class GemmaClient:
             return '{"status": "mock", "message": "Mock Gemma text response"}'
         if self.settings.app_mode == "local":
             return self._call_ollama(prompt)
+        if self.settings.app_mode == "google":
+            return self._call_google_ai(prompt)
         if not self.settings.gemma_api_key:
             raise RuntimeError("GEMMA_API_KEY is required when APP_MODE=live.")
         raise NotImplementedError("Live Gemma provider transport should be added in GemmaClient only.")
@@ -33,6 +35,8 @@ class GemmaClient:
         if self.settings.app_mode == "local":
             image_payload = self._image_to_base64(image)
             return self._call_ollama(prompt, images=[image_payload] if image_payload else None)
+        if self.settings.app_mode == "google":
+            return self._call_google_ai(prompt, images=[image] if image is not None else None)
         if not self.settings.gemma_api_key:
             raise RuntimeError("GEMMA_API_KEY is required when APP_MODE=live.")
         raise NotImplementedError("Live Gemma provider transport should be added in GemmaClient only.")
@@ -75,6 +79,53 @@ class GemmaClient:
         if "error" in data:
             raise RuntimeError(f"Local Gemma error: {data['error']}")
         return str(data.get("response", "")).strip()
+
+    def _call_google_ai(self, prompt: str, images: list[Any] | None = None) -> str:
+        """Call the real Google AI (Gemini) API via the `google-genai` SDK. Used for APP_MODE=google."""
+        try:
+            from google import genai
+            from google.genai import types
+        except ImportError as exc:
+            raise RuntimeError(
+                "google-genai is not installed. Run `pip install google-genai` to use APP_MODE=google."
+            ) from exc
+
+        if not self.settings.google_api_key:
+            raise RuntimeError("GOOGLE_API_KEY is required when APP_MODE=google.")
+
+        client = genai.Client(api_key=self.settings.google_api_key)
+
+        contents: list[Any] = [prompt]
+        for image in images or []:
+            image_bytes = self._image_to_bytes(image)
+            if image_bytes:
+                contents.append(types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"))
+
+        try:
+            response = client.models.generate_content(
+                model=self.settings.google_model_name,
+                contents=contents,
+            )
+        except Exception as exc:  # google-genai raises provider-specific exceptions
+            raise RuntimeError(f"Google AI (Gemini) request failed: {exc}") from exc
+
+        return (getattr(response, "text", "") or "").strip()
+
+    @staticmethod
+    def _image_to_bytes(image: Any) -> bytes | None:
+        if image is None:
+            return None
+        if isinstance(image, bytes):
+            return image
+        if hasattr(image, "getvalue"):
+            return image.getvalue()
+        if hasattr(image, "read"):
+            current_position = image.tell() if hasattr(image, "tell") else None
+            content = image.read()
+            if current_position is not None and hasattr(image, "seek"):
+                image.seek(current_position)
+            return content
+        return None
 
     @staticmethod
     def _image_to_base64(image: Any) -> str | None:

@@ -3,3 +3,5 @@ pydantic>=2.7
 python-dotenv>=1.0
 pytest>=8.0
 kagglehub>=1.0
+# Only required for APP_MODE=google (Best Use of Google AI category demo)
+google-genai>=1.0
