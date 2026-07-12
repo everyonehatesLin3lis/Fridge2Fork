@@ -88,7 +88,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 ## Mock And Live Modes
 
 - `APP_MODE=mock`: deterministic text/demo flow, no paid API calls. Mock mode does not inspect uploaded images; type confirmed ingredients for demos.
-- `APP_MODE=local`: calls a local Ollama-compatible model through `src/services/gemma_client.py`.
+- `APP_MODE=local`: calls a local Ollama-compatible model through `src/services/gemma_client.py`. Recipe text uses `GEMMA_MODEL_NAME`; photo analysis uses `VISION_MODEL_NAME` (default `llava:7b`, pulled automatically by `run.bat`) because `gemma4:e4b`'s Ollama vision path returns "no image" on some setups.
 - `APP_MODE=google`: calls the real Google AI (Gemini) API through the `google-genai` SDK. Set `GOOGLE_API_KEY` (from [aistudio.google.com/apikey](https://aistudio.google.com/apikey)) and optionally `GOOGLE_MODEL_NAME` (default `gemini-2.0-flash`). Works without any local model install, including image ingredient detection.
 - `APP_MODE=live`: routes calls through `src/services/gemma_client.py`. Provider-specific API wiring can be added there without touching agent files.
 

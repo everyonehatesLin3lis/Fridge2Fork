@@ -17,6 +17,8 @@ load_dotenv()
 os.environ.setdefault("APP_MODE", "local")
 os.environ.setdefault("GEMMA_MODEL_NAME", "gemma4:e4b")
 os.environ.setdefault("OLLAMA_BASE_URL", "http://localhost:11434")
+# gemma4:e4b's Ollama vision path is unreliable; photos go to a dedicated vision model.
+os.environ.setdefault("VISION_MODEL_NAME", "llava:7b")
 
 SURPRISE_INGREDIENTS = ["eggs", "pasta", "rice", "onion", "tomatoes", "cheese"]
 

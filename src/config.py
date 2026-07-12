@@ -15,6 +15,7 @@ class Settings:
     google_api_key: str | None
     google_model_name: str
     ollama_timeout_seconds: int
+    vision_model_name: str
 
 
 def get_settings() -> Settings:
@@ -28,4 +29,6 @@ def get_settings() -> Settings:
         google_api_key=os.getenv("GOOGLE_API_KEY"),
         google_model_name=os.getenv("GOOGLE_MODEL_NAME", "gemini-2.0-flash"),
         ollama_timeout_seconds=int(os.getenv("OLLAMA_TIMEOUT_SECONDS", "300")),
+        # Separate model for photo analysis; defaults to the main model.
+        vision_model_name=os.getenv("VISION_MODEL_NAME", os.getenv("GEMMA_MODEL_NAME", "gemma4:e4b")),
     )

@@ -34,7 +34,14 @@ class GemmaClient:
             return '{"status": "mock", "message": "Mock Gemma multimodal response"}'
         if self.settings.app_mode == "local":
             image_payload = self._image_to_base64(image)
-            return self._call_ollama(prompt, images=[image_payload] if image_payload else None)
+            # format="json" makes Ollama constrain the output to valid JSON,
+            # which vision models like llava do not produce reliably on their own.
+            return self._call_ollama(
+                prompt,
+                images=[image_payload] if image_payload else None,
+                model=self.settings.vision_model_name,
+                format="json",
+            )
         if self.settings.app_mode == "google":
             return self._call_google_ai(prompt, images=[image] if image is not None else None)
         if not self.settings.gemma_api_key:
@@ -45,14 +52,22 @@ class GemmaClient:
         """Return a short response from the configured local model."""
         return self.generate_text("Reply with one short sentence: FridgeAgent local Gemma is ready.")
 
-    def _call_ollama(self, prompt: str, images: list[str] | None = None) -> str:
+    def _call_ollama(
+        self,
+        prompt: str,
+        images: list[str] | None = None,
+        model: str | None = None,
+        format: str | None = None,
+    ) -> str:
         payload: dict[str, Any] = {
-            "model": self.settings.gemma_model_name,
+            "model": model or self.settings.gemma_model_name,
             "prompt": prompt,
             "stream": False,
         }
         if images:
             payload["images"] = images
+        if format:
+            payload["format"] = format
 
         url = f"{self.settings.ollama_base_url.rstrip('/')}/api/generate"
         request = Request(

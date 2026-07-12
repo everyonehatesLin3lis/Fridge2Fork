@@ -143,6 +143,10 @@ def main() -> int:
     mode = resolve_app_mode()
 
     if mode == "local":
+        # gemma4:e4b text generation works well locally, but its Ollama vision
+        # path returns "no image" on this stack, so photo analysis uses a
+        # dedicated vision model by default.
+        os.environ.setdefault("VISION_MODEL_NAME", "llava:7b")
         model = os.environ.get("GEMMA_MODEL_NAME", "gemma4:e4b")
         if not ensure_ollama(model):
             if os.environ.get("GOOGLE_API_KEY"):
@@ -152,6 +156,11 @@ def main() -> int:
                 log("Falling back to APP_MODE=mock so the app still starts.")
                 log("Install Ollama or set GOOGLE_API_KEY in .env for real model output.")
                 mode = "mock"
+        if mode == "local":
+            vision_model = os.environ["VISION_MODEL_NAME"]
+            if vision_model != model and not ensure_ollama(vision_model):
+                log(f"Vision model {vision_model} unavailable; photo analysis will use {model}.")
+                os.environ["VISION_MODEL_NAME"] = model
         os.environ["APP_MODE"] = mode
     elif mode == "google" and not os.environ.get("GOOGLE_API_KEY"):
         log("APP_MODE=google but GOOGLE_API_KEY is missing in .env. Falling back to mock.")

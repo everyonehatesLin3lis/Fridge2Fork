@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from pydantic import BaseModel
@@ -77,26 +78,16 @@ def _detect(image: Any) -> IngredientExtractionResponse:
             ],
         )
 
+    # Kept deliberately simple: small local vision models cannot reliably fill
+    # a deeply nested schema, so missing fields are filled in by _coerce_detection.
     prompt = """
-You are the Vision Agent for FridgeAgent.
-Detect only visible food items in this fridge or food image.
+You are a food recognition assistant.
+Look at this fridge or food photo and list every food item you can clearly see.
 Return only JSON with this exact shape:
-{
-  "ingredients": [
-    {
-      "name": "ingredient name",
-      "category": "vegetable|fruit|protein|dairy|grain|sauce|other",
-      "quantity": "visible rough quantity or null",
-      "confidence": 0.0,
-      "use_soon": false,
-      "possible_variants": ["possible specific type if ambiguous"],
-      "uncertainty_note": "why this matters, or null"
-    }
-  ],
-  "uncertain_items": ["unclear item description"]
-}
-Do not invent hidden ingredients. If unsure, use lower confidence and add the item to uncertain_items.
-Separate visible-object confidence from ingredient certainty by using lower confidence for unclear packages.
+{"ingredients": [{"name": "tomato", "confidence": 0.9}], "uncertain_items": ["unclear item description"]}
+Rules:
+- confidence is a number between 0 and 1; use lower values for unclear packaging or partially hidden items.
+- Do not invent hidden ingredients. If something is unclear, describe it briefly in uncertain_items instead.
 """
     image_size = _image_byte_size(image)
     if image_size == 0:
@@ -113,7 +104,7 @@ Separate visible-object confidence from ingredient certainty by using lower conf
     with Stopwatch() as watch:
         try:
             raw_response = GemmaClient().generate_from_image(image, prompt)
-            result = parse_json_response(raw_response, IngredientExtractionResponse)
+            result = _parse_detection(raw_response)
         except (RuntimeError, ValueError) as exc:
             error = exc
 
@@ -126,6 +117,52 @@ Separate visible-object confidence from ingredient certainty by using lower conf
             "The vision model could not parse the image. Confirm ingredients manually or retry with a clearer photo."
         ],
     )
+
+
+def _parse_detection(raw_response: str) -> IngredientExtractionResponse:
+    """Parse a vision model reply, tolerating simplified shapes.
+
+    Small local vision models often return plain strings instead of objects,
+    or drop fields like category and confidence. Strict schema validation is
+    tried first; otherwise the payload is coerced item by item.
+    """
+    try:
+        return parse_json_response(raw_response, IngredientExtractionResponse)
+    except ValueError:
+        pass
+
+    payload = json.loads(raw_response[raw_response.find("{") : raw_response.rfind("}") + 1])
+    if not isinstance(payload, dict):
+        raise ValueError("Vision model response was not a JSON object.")
+
+    ingredients = []
+    for item in payload.get("ingredients") or []:
+        if isinstance(item, str):
+            name, source = item, {}
+        elif isinstance(item, dict):
+            name, source = str(item.get("name", "")), item
+        else:
+            continue
+        name = name.strip()
+        if not name:
+            continue
+        try:
+            confidence = float(source.get("confidence", 0.7))
+        except (TypeError, ValueError):
+            confidence = 0.7
+        category = str(source.get("category") or "").strip() or _category_for_confirmed(name)
+        ingredients.append(
+            Ingredient(
+                name=name,
+                category=category,
+                quantity=str(source["quantity"]) if source.get("quantity") else None,
+                confidence=min(max(confidence, 0.0), 1.0),
+                use_soon=bool(source.get("use_soon", False)),
+            )
+        )
+
+    uncertain_items = [str(item).strip() for item in payload.get("uncertain_items") or [] if str(item).strip()]
+    return IngredientExtractionResponse(ingredients=ingredients, uncertain_items=uncertain_items)
 
 
 def _image_byte_size(image: Any) -> int | None:
@@ -155,7 +192,7 @@ def _log_detection_telemetry(
         {
             "image_bytes": image_size,
             "app_mode": settings.app_mode,
-            "model": settings.gemma_model_name if settings.app_mode == "local" else getattr(settings, "google_model_name", ""),
+            "model": settings.vision_model_name if settings.app_mode == "local" else getattr(settings, "google_model_name", ""),
             "latency_ms": latency_ms,
             "parse_ok": result is not None,
             "error_type": type(error).__name__ if error else None,
