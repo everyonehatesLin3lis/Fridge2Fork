@@ -13,9 +13,18 @@ your time and mental energy so you can get straight to the pan.
 
 **Challenge:** [DEV Weekend Challenge: Passion Edition](https://dev.to/challenges/weekend-2026-07-09)
 
-**Live demo:** [fridgeagent-30975867572.europe-north1.run.app](https://fridgeagent-30975867572.europe-north1.run.app)
+[![Launch the live demo](https://img.shields.io/badge/Launch_Live_Demo-Google_Cloud_Run-0F9D58?style=for-the-badge&logo=googlecloud&logoColor=white)](https://fridgeagent-30975867572.europe-north1.run.app)
 
 ![FridgeAgent welcome screen](screenshots/01_welcome.png)
+
+## Live Demo
+
+**Try it now:** [https://fridgeagent-30975867572.europe-north1.run.app](https://fridgeagent-30975867572.europe-north1.run.app)
+
+The public demo runs on Google Cloud Run and calls Vertex AI through a scoped
+service account—there is no API key in the repository, container, or browser.
+It uses `gemini-2.5-flash`, is capped at two instances, and scales to zero when
+idle.
 
 ## Run It (One Command)
 
@@ -175,7 +184,7 @@ Three ways to look at it:
 1. **📊 LLM Ops panel** in the app sidebar (live summaries)
 2. `python scripts/llm_ops_report.py --check` — full report; exits non-zero
    when performance budgets are violated
-3. **CI** (`.github/workflows/ci.yml`) — every push runs the 51-test suite
+3. **CI** (`.github/workflows/ci.yml`) — every push runs the 54-test suite
    (including RAG correctness + latency budget against a committed fixture
    index) plus the budget check, and uploads the run's telemetry as an
    artifact so retrieval performance is comparable between commits
@@ -264,7 +273,7 @@ review those terms before downloading or using it.
 | Mode | What it does |
 |---|---|
 | `APP_MODE=local` (default) | Recipes via `GEMMA_MODEL_NAME` (`gemma4:e4b`), photos via `VISION_MODEL_NAME` (`llava:7b`), both through Ollama |
-| `APP_MODE=google` | Everything through the real Gemini API (`google-genai` SDK, default `gemini-3.5-flash`). Free key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey). No local GPU needed |
+| `APP_MODE=google` | Google Gen AI SDK for both image and text. Local key mode defaults to `gemini-3.5-flash`; the keyless Cloud Run deployment uses Vertex AI with `gemini-2.5-flash` and service-account authentication |
 | `APP_MODE=mock` | Deterministic demo flow, no model calls at all |
 
 Copy `.env.example` to `.env` to configure. Manual start, if you prefer it over
@@ -278,6 +287,8 @@ streamlit run main.py
 ```
 
 ## Deploy on Google Cloud Run
+
+**Current deployment:** [open FridgeAgent](https://fridgeagent-30975867572.europe-north1.run.app) · project `fridge2fork-502221` · region `europe-north1` · model `gemini-2.5-flash`
 
 The repository includes a production `Dockerfile` and explicit Cloud Run
 ignore rules. The recommended deployment uses the Cloud Run service identity
