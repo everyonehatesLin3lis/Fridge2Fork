@@ -11,6 +11,10 @@ Built up for the [DEV Weekend Challenge: Passion Edition](https://dev.to/challen
 Our take on passion: love the cooking, not the deciding — FridgeAgent saves
 your time and mental energy so you can get straight to the pan.
 
+**Challenge links:** [DEV Weekend Challenge](https://dev.to/challenges/weekend-2026-07-09)
+· [Ready-to-publish DEV submission](submission/dev_post_draft.md)
+· [30-second demo script](submission/demo_script.md)
+
 ![FridgeAgent welcome screen](screenshots/01_welcome.png)
 
 ## Run It (One Command)
@@ -34,7 +38,8 @@ Optional: `run.bat --mock`, `run.bat --google`, `run.bat --local`.
 2. **"What's the occasion?"** — breakfast / lunch / dinner / snacks / meal prep
 3. **"What are you craving?"** — quick & easy / healthy / high protein / budget / comfort food
 4. Ten seconds of details → **recipe cards**: description, time chips,
-   "you already have / you might need", numbered plain-language steps
+   estimated calories per portion, "you already have / you might need", and
+   numbered plain-language steps
 5. Tell the chat *"I'm buying blended beef"* → the cards refresh in place with
    recipes built around blended beef. Or hit **🎲 Show me different recipes**
    for a fresh batch from the same fridge.
@@ -179,6 +184,12 @@ Three ways to look at it:
 
 ## Under the Hood
 
+FridgeAgent is not one big recipe prompt. It is a bounded four-agent workflow
+where each specialist owns one part of the decision: image understanding and
+ingredient verification, constraint normalization, RAG-grounded recipe
+planning with portion math and rough nutrition ranking, and final allergy-safe
+recipe card writing.
+
 ```text
 Photos / typed products
    -> Vision Agent        (detect, merge, flag low-confidence for confirmation)
@@ -267,8 +278,9 @@ streamlit run main.py
 pytest
 ```
 
-51 tests: agent workflow in mock mode, RAG retrieval correctness and latency
-budgets, telemetry collection, Google AI client, JSON parsing edge cases.
+52 tests: agent workflow in mock mode, RAG retrieval correctness and latency
+budgets, telemetry collection, Google AI client, JSON parsing edge cases, and
+the primary web experience's decision-time and calories-per-portion copy.
 
 ## Limitations
 
@@ -276,6 +288,14 @@ budgets, telemetry collection, Google AI client, JSON parsing edge cases.
 - Local photo analysis takes ~5–12s per photo; local recipe generation ~60–90s.
 - The RAG index is a compact sample for speed, not the full 2M-recipe dataset.
 - Mock mode cannot inspect images — type your products instead.
+
+## Future Improvements
+
+- Replace rough nutrition heuristics with an optional, clearly sourced food
+  nutrition dataset while keeping every value labeled as an estimate.
+- Add a lightweight ingredient-confirmation screen for ambiguous photo items.
+- Package a small redistributable RAG starter index for more varied recipes on
+  the first run.
 
 ## Disclosure
 
