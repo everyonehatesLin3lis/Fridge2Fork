@@ -23,7 +23,22 @@ prep time, cook time, total time, and concrete cooking steps. Recipes should say
 how to cut ingredients, what heat or cooking environment to use, how long each
 stage takes, and how to recognize doneness.
 
-## Setup
+## One-Command Start
+
+Double-click `run.bat` (or run `python run.py`). It automates the whole startup
+chain — no other terminal commands are needed:
+
+1. Creates the virtual environment on first run and installs dependencies when
+   `requirements.txt` changed.
+2. Reads `.env` (if present) for the model mode.
+3. For local mode it starts Ollama automatically if it is not running and pulls
+   the model on first use.
+4. If no model backend is available it falls back to mock mode so the app
+   always starts, then launches the webapp in your browser.
+
+Optional flags: `run.bat --mock`, `run.bat --google`, `run.bat --local`.
+
+## Manual Setup
 
 ```powershell
 python -m venv .venv
