@@ -13,6 +13,8 @@ your time and mental energy so you can get straight to the pan.
 
 **Challenge:** [DEV Weekend Challenge: Passion Edition](https://dev.to/challenges/weekend-2026-07-09)
 
+**Live demo:** [fridgeagent-30975867572.europe-north1.run.app](https://fridgeagent-30975867572.europe-north1.run.app)
+
 ![FridgeAgent welcome screen](screenshots/01_welcome.png)
 
 ## Run It (One Command)
