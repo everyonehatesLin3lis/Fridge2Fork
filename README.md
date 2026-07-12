@@ -278,13 +278,12 @@ streamlit run main.py
 ## Deploy on Google Cloud Run
 
 The repository includes a production `Dockerfile` and explicit Cloud Run
-ignore rules. Google mode keeps the Gemini API key on the server; it is never
-sent to the browser.
+ignore rules. The recommended deployment uses the Cloud Run service identity
+to call Vertex AI, so no API key is stored or sent to the browser.
 
-Prerequisites: a Google Cloud project with billing enabled, the Google Cloud
-CLI, and a Gemini API key. The commands below use a dedicated runtime service
-account and Secret Manager so the key is not placed in source control or a
-plain deployment command.
+Prerequisites: a Google Cloud project with billing enabled and the Google Cloud
+CLI. The commands below create a dedicated runtime service account with only
+the Vertex AI User role.
 
 ```powershell
 $PROJECT_ID = "your-google-cloud-project-id"
@@ -293,37 +292,28 @@ $SERVICE_ACCOUNT = "fridgeagent-run@$PROJECT_ID.iam.gserviceaccount.com"
 
 gcloud auth login
 gcloud config set project $PROJECT_ID
-gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com aiplatform.googleapis.com
 
 gcloud iam service-accounts create fridgeagent-run --display-name="FridgeAgent Cloud Run"
-gcloud secrets create fridgeagent-google-api-key --replication-policy="automatic"
-$apiKey = Read-Host "Paste the Google AI API key"
-$tempSecret = [System.IO.Path]::GetTempFileName()
-[System.IO.File]::WriteAllBytes($tempSecret, [System.Text.Encoding]::UTF8.GetBytes($apiKey))
-gcloud secrets versions add fridgeagent-google-api-key --data-file=$tempSecret
-Remove-Item -LiteralPath $tempSecret
-Remove-Variable apiKey
-
-gcloud secrets add-iam-policy-binding fridgeagent-google-api-key `
+gcloud projects add-iam-policy-binding $PROJECT_ID `
   --member="serviceAccount:$SERVICE_ACCOUNT" `
-  --role="roles/secretmanager.secretAccessor"
+  --role="roles/aiplatform.user"
 
 gcloud run deploy fridgeagent `
   --source . `
   --region $REGION `
   --allow-unauthenticated `
   --service-account $SERVICE_ACCOUNT `
-  --set-env-vars "APP_MODE=google,GOOGLE_MODEL_NAME=gemini-3.5-flash" `
-  --set-secrets "GOOGLE_API_KEY=fridgeagent-google-api-key:1" `
+  --set-env-vars "APP_MODE=google,GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=global,GOOGLE_MODEL_NAME=gemini-2.5-flash" `
   --memory 1Gi `
   --concurrency 4 `
   --max-instances 2 `
   --timeout 300
 ```
 
-For a public demo, set conservative Gemini API quotas and billing alerts before
+For a public demo, set conservative Vertex AI quotas and billing alerts before
 sharing the URL. `--max-instances 2` limits Cloud Run scaling but does not cap
-Gemini API spend. If the app should be private, remove
+Vertex AI spend. If the app should be private, remove
 `--allow-unauthenticated`.
 
 ## Tests
@@ -332,7 +322,7 @@ Gemini API spend. If the app should be private, remove
 pytest
 ```
 
-53 tests: agent workflow in mock mode, RAG retrieval correctness and latency
+54 tests: agent workflow in mock mode, RAG retrieval correctness and latency
 budgets, telemetry collection, Google AI client, JSON parsing edge cases, and
 the primary web experience's decision-time and calories-per-portion copy.
 

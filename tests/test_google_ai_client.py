@@ -9,6 +9,9 @@ from src.services.gemma_client import GemmaClient
 def _google_mode(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("APP_MODE", "google")
     monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_GENAI_USE_VERTEXAI", raising=False)
+    monkeypatch.delenv("GOOGLE_CLOUD_PROJECT", raising=False)
+    monkeypatch.delenv("GOOGLE_CLOUD_LOCATION", raising=False)
 
 
 def test_google_mode_requires_api_key() -> None:
@@ -60,3 +63,31 @@ def test_google_mode_returns_response_text(monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.setattr(genai, "Client", _FakeClient)
 
     assert GemmaClient().generate_text("hello") == "a real Gemini reply"
+
+
+def test_google_mode_supports_vertex_service_identity(monkeypatch: pytest.MonkeyPatch) -> None:
+    from google import genai
+
+    monkeypatch.setenv("GOOGLE_GENAI_USE_VERTEXAI", "true")
+    monkeypatch.setenv("GOOGLE_CLOUD_PROJECT", "test-project")
+    monkeypatch.setenv("GOOGLE_CLOUD_LOCATION", "global")
+    captured: dict[str, object] = {}
+
+    class _FakeResponse:
+        text = "Vertex reply"
+
+    class _FakeModels:
+        def generate_content(self, **_kwargs: object) -> _FakeResponse:
+            return _FakeResponse()
+
+    class _FakeClient:
+        def __init__(self, **kwargs: object) -> None:
+            captured.update(kwargs)
+            self.models = _FakeModels()
+
+    monkeypatch.setattr(genai, "Client", _FakeClient)
+
+    assert GemmaClient().generate_text("hello") == "Vertex reply"
+    assert captured["vertexai"] is True
+    assert captured["project"] == "test-project"
+    assert captured["location"] == "global"

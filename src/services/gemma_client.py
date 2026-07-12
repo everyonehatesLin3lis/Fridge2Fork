@@ -114,10 +114,21 @@ class GemmaClient:
                 "google-genai is not installed. Run `pip install google-genai` to use APP_MODE=google."
             ) from exc
 
-        if not self.settings.google_api_key:
-            raise RuntimeError("GOOGLE_API_KEY is required when APP_MODE=google.")
-
-        client = genai.Client(api_key=self.settings.google_api_key)
+        if self.settings.google_use_vertexai:
+            if not self.settings.google_cloud_project:
+                raise RuntimeError(
+                    "GOOGLE_CLOUD_PROJECT is required when Google mode uses Vertex AI."
+                )
+            client = genai.Client(
+                vertexai=True,
+                project=self.settings.google_cloud_project,
+                location=self.settings.google_cloud_location,
+                http_options=types.HttpOptions(api_version="v1"),
+            )
+        else:
+            if not self.settings.google_api_key:
+                raise RuntimeError("GOOGLE_API_KEY is required when APP_MODE=google.")
+            client = genai.Client(api_key=self.settings.google_api_key)
 
         contents: list[Any] = [prompt]
         for image in images or []:

@@ -14,6 +14,9 @@ class Settings:
     ollama_base_url: str
     google_api_key: str | None
     google_model_name: str
+    google_use_vertexai: bool
+    google_cloud_project: str | None
+    google_cloud_location: str
     ollama_timeout_seconds: int
     vision_model_name: str
 
@@ -28,6 +31,9 @@ def get_settings() -> Settings:
         ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         google_api_key=os.getenv("GOOGLE_API_KEY"),
         google_model_name=os.getenv("GOOGLE_MODEL_NAME", "gemini-3.5-flash"),
+        google_use_vertexai=os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "false").lower() in {"1", "true", "yes"},
+        google_cloud_project=os.getenv("GOOGLE_CLOUD_PROJECT"),
+        google_cloud_location=os.getenv("GOOGLE_CLOUD_LOCATION", "global"),
         ollama_timeout_seconds=int(os.getenv("OLLAMA_TIMEOUT_SECONDS", "300")),
         # Separate model for photo analysis; defaults to the main model.
         vision_model_name=os.getenv("VISION_MODEL_NAME", os.getenv("GEMMA_MODEL_NAME", "gemma4:e4b")),
