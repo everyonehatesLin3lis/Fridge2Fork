@@ -13,16 +13,30 @@ from src.services.recipe_rag import RecipeRagStore, format_references_for_prompt
 from src.utils.recipe_feasibility import validate_and_repair_recipe
 
 
-def run(ingredients: VerifiedIngredients, preferences: UserPreferences) -> tuple[list[RecipeCandidate], list[RankedRecipe]]:
+def run(
+    ingredients: VerifiedIngredients,
+    preferences: UserPreferences,
+    avoid_titles: list[str] | None = None,
+    featured_ingredients: list[str] | None = None,
+) -> tuple[list[RecipeCandidate], list[RankedRecipe]]:
     """Create practical recipes, calculate portions, and rank nutrition fit."""
-    recipe_candidates = plan_recipes(ingredients, preferences)
+    recipe_candidates = plan_recipes(ingredients, preferences, avoid_titles, featured_ingredients)
     ranked_recipes = rank_recipes(recipe_candidates, preferences)
     return recipe_candidates, ranked_recipes
 
 
-def plan_recipes(ingredients: VerifiedIngredients, preferences: UserPreferences) -> list[RecipeCandidate]:
+def plan_recipes(
+    ingredients: VerifiedIngredients,
+    preferences: UserPreferences,
+    avoid_titles: list[str] | None = None,
+    featured_ingredients: list[str] | None = None,
+) -> list[RecipeCandidate]:
     """Create practical recipe candidates from verified ingredients and preferences."""
     available = _normalize_ingredient_names([ingredient.name for ingredient in ingredients.ingredients])
+    featured = _normalize_ingredient_names(featured_ingredients or [])
+    if featured:
+        # Featured products lead the list so they anchor fallback recipes too.
+        available = list(dict.fromkeys([*featured, *available]))
     if not available:
         return []
     recipe_references = RecipeRagStore().search(
@@ -34,6 +48,19 @@ def plan_recipes(ingredients: VerifiedIngredients, preferences: UserPreferences)
     if get_settings().app_mode in {"local", "google"}:
         constraint_note = _constraint_note(preferences)
         reference_context = format_references_for_prompt(recipe_references)
+        featured_note = (
+            f"\nThe user just added these products and wants to cook with them: {json.dumps(featured)}. "
+            "Every recipe MUST use them as a central ingredient, not a garnish.\n"
+            if featured
+            else ""
+        )
+        avoid_note = (
+            f"\nThe user has already seen these recipes: {json.dumps(avoid_titles)}. "
+            "Do NOT repeat them or offer close variations. Propose clearly different dishes: "
+            "change the cooking technique, dish format, or cuisine.\n"
+            if avoid_titles
+            else ""
+        )
         prompt = f"""
 You are the Recipe Planner Agent for FridgeAgent.
 Create 2 to 4 practical home recipes using these confirmed ingredients:
@@ -44,7 +71,7 @@ User preferences:
 
 Constraint check:
 {constraint_note}
-
+{featured_note}{avoid_note}
 Local recipe references retrieved from the Kaggle recipe dataset:
 {reference_context}
 
@@ -99,7 +126,7 @@ Rules:
         try:
             return _validate_feasibility(
                 _ensure_ingredient_amounts(
-                    parse_json_list_response(GemmaClient().generate_text(prompt), RecipeCandidate),
+                    parse_json_list_response(GemmaClient().generate_text(prompt, creative=True), RecipeCandidate),
                     preferences.meals_needed,
                 )
             )

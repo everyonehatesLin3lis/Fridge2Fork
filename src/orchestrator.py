@@ -17,8 +17,14 @@ def run_fridge_agent_workflow(
     image: Any,
     raw_user_preferences: dict[str, Any],
     monitor: MonitorCallback | None = None,
+    avoid_recipe_titles: list[str] | None = None,
+    featured_ingredients: list[str] | None = None,
 ) -> AgentWorkflowState:
-    """Run the complete four-agent fridge-to-recipe workflow."""
+    """Run the complete four-agent fridge-to-recipe workflow.
+
+    avoid_recipe_titles: previously shown recipes the planner must not repeat.
+    featured_ingredients: just-added products every recipe must feature.
+    """
     hermes = HermesOrchestrator()
 
     confirmed_ingredients = _normalize_confirmed_ingredients(
@@ -177,6 +183,8 @@ def run_fridge_agent_workflow(
     recipe_candidates, ranked_recipes = recipe_planner_agent.run(
         ingredients=verified_ingredients,
         preferences=normalized_preferences,
+        avoid_titles=avoid_recipe_titles,
+        featured_ingredients=featured_ingredients,
     )
     _emit(
         monitor,

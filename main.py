@@ -300,12 +300,23 @@ def current_ingredient_names() -> list[str]:
     ]
 
 
-def refresh_with_added_products(new_items: list[str]) -> None:
-    """Re-run the workflow with the current products plus new ones, updating the cards in place."""
+def previous_recipe_titles() -> list[str]:
+    result = st.session_state.latest_result
+    if result is None:
+        return []
+    return [recipe.title for recipe in result.final_recipes]
+
+
+def rerun_recipes(new_items: list[str] | None = None, spinner_text: str | None = None) -> None:
+    """Re-run the workflow in place: same view, same style, fresh recipes.
+
+    New products (if any) are merged in and marked as must-use; the previous
+    recipe titles are passed as an avoid-list so the refresh feels new.
+    """
+    new_items = [item.strip().lower() for item in new_items or [] if item.strip()]
     merged = current_ingredient_names()
-    for item in new_items:
-        cleaned = item.strip().lower()
-        if cleaned and cleaned not in merged:
+    for cleaned in new_items:
+        if cleaned not in merged:
             merged.append(cleaned)
 
     preferences = dict(st.session_state.get("last_preferences") or default_preferences())
@@ -315,12 +326,25 @@ def refresh_with_added_products(new_items: list[str]) -> None:
     st.session_state.ingredient_mode = "typed"
     st.session_state.monitor_events = []
 
-    with st.spinner(f"👨‍🍳 Adding {', '.join(new_items)} and refreshing your recipes..."):
-        result = run_fridge_agent_workflow(None, preferences, monitor=add_monitor_event)
+    with st.spinner(spinner_text or "👨‍🍳 Cooking up fresh ideas..."):
+        result = run_fridge_agent_workflow(
+            None,
+            preferences,
+            monitor=add_monitor_event,
+            avoid_recipe_titles=previous_recipe_titles(),
+            featured_ingredients=new_items or None,
+        )
     st.session_state.latest_result = result
     st.session_state.latest_result_json = result.model_dump_json(indent=2)
     st.session_state.step = 5
     st.rerun()
+
+
+def refresh_with_added_products(new_items: list[str]) -> None:
+    rerun_recipes(
+        new_items,
+        spinner_text=f"👨‍🍳 Adding {', '.join(new_items)} and building recipes around it...",
+    )
 
 
 def extract_added_products(message: str) -> list[str]:
@@ -360,7 +384,7 @@ def render_results() -> None:
 
     st.title("🍽️ Here's what you can make!")
 
-    col_restart, col_retry = st.columns(2)
+    col_restart, col_retry, col_reroll = st.columns(3)
     with col_restart:
         if st.button("🔄 Start over", width="stretch"):
             st.session_state.latest_result = None
@@ -369,6 +393,9 @@ def render_results() -> None:
     with col_retry:
         if st.button("🎛️ Same products, different vibe", width="stretch"):
             go_to_step(2)
+    with col_reroll:
+        if st.button("🎲 Show me different recipes", width="stretch"):
+            rerun_recipes(spinner_text="👨‍🍳 Coming up with completely different ideas...")
 
     with st.container(border=True):
         st.markdown("**🛒 Got something new? Add products and refresh the recipes:**")
@@ -555,6 +582,21 @@ with st.sidebar:
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
+
+    with st.expander("📊 LLM Ops"):
+        try:
+            from scripts.llm_ops_report import rag_summary, vision_summary
+
+            st.caption("**Vision model detection** (per analyzed photo)")
+            st.json(vision_summary() or {"status": "no photo runs recorded yet"})
+            st.caption("**Recipe RAG retrieval** (per reference search)")
+            st.json(rag_summary() or {"status": "no searches recorded yet"})
+            st.caption(
+                "Raw data: `data/telemetry/*.jsonl` — full report with budget checks: "
+                "`python scripts/llm_ops_report.py --check`"
+            )
+        except Exception as exc:  # ops panel must never break the app
+            st.warning(f"Could not load telemetry: {exc}")
 
 step = st.session_state.step
 if step == 1:

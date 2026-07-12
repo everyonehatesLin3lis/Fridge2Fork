@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import random
 import socket
 from typing import Any
 from urllib.error import URLError
@@ -16,14 +17,19 @@ class GemmaClient:
     def __init__(self) -> None:
         self.settings = get_settings()
 
-    def generate_text(self, prompt: str) -> str:
-        """Generate text from a prompt."""
+    def generate_text(self, prompt: str, creative: bool = False) -> str:
+        """Generate text from a prompt.
+
+        creative=True raises temperature and randomizes the seed so repeated
+        calls with the same prompt produce different output (recipe variety).
+        """
         if self.settings.app_mode == "mock":
             return '{"status": "mock", "message": "Mock Gemma text response"}'
         if self.settings.app_mode == "local":
-            return self._call_ollama(prompt)
+            options = {"temperature": 0.95, "seed": random.randint(0, 2**31 - 1)} if creative else None
+            return self._call_ollama(prompt, options=options)
         if self.settings.app_mode == "google":
-            return self._call_google_ai(prompt)
+            return self._call_google_ai(prompt, creative=creative)
         if not self.settings.gemma_api_key:
             raise RuntimeError("GEMMA_API_KEY is required when APP_MODE=live.")
         raise NotImplementedError("Live Gemma provider transport should be added in GemmaClient only.")
@@ -58,6 +64,7 @@ class GemmaClient:
         images: list[str] | None = None,
         model: str | None = None,
         format: str | None = None,
+        options: dict[str, Any] | None = None,
     ) -> str:
         payload: dict[str, Any] = {
             "model": model or self.settings.gemma_model_name,
@@ -68,6 +75,8 @@ class GemmaClient:
             payload["images"] = images
         if format:
             payload["format"] = format
+        if options:
+            payload["options"] = options
 
         url = f"{self.settings.ollama_base_url.rstrip('/')}/api/generate"
         request = Request(
@@ -95,7 +104,7 @@ class GemmaClient:
             raise RuntimeError(f"Local Gemma error: {data['error']}")
         return str(data.get("response", "")).strip()
 
-    def _call_google_ai(self, prompt: str, images: list[Any] | None = None) -> str:
+    def _call_google_ai(self, prompt: str, images: list[Any] | None = None, creative: bool = False) -> str:
         """Call the real Google AI (Gemini) API via the `google-genai` SDK. Used for APP_MODE=google."""
         try:
             from google import genai
@@ -120,6 +129,7 @@ class GemmaClient:
             response = client.models.generate_content(
                 model=self.settings.google_model_name,
                 contents=contents,
+                config=types.GenerateContentConfig(temperature=0.95) if creative else None,
             )
         except Exception as exc:  # google-genai raises provider-specific exceptions
             raise RuntimeError(f"Google AI (Gemini) request failed: {exc}") from exc
