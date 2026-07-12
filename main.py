@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import re
 from datetime import datetime
@@ -267,6 +268,88 @@ def render_step_details() -> None:
         go_to_step(5)
 
 
+# ------------------------------------------------------- Recipe refreshing
+
+ADD_INTENT = re.compile(
+    r"\b(buy|buying|bought|add|adding|added|getting|got|grab|grabbing|pick(ing)? up|purchase[ds]?)\b",
+    re.IGNORECASE,
+)
+
+
+def default_preferences() -> dict:
+    return {
+        "goal": st.session_state.goal or "quick",
+        "allergies": [],
+        "diet_style": "normal",
+        "max_cooking_time_minutes": 30,
+        "meals_needed": 2,
+        "meal_type": st.session_state.meal_type or "dinner",
+        "constraint_resolution": "make_best_effort",
+        "available_tools": ["pan", "pot", "oven"],
+    }
+
+
+def current_ingredient_names() -> list[str]:
+    result = st.session_state.latest_result
+    if result is not None and result.verified_ingredients.ingredients:
+        return [ingredient.name for ingredient in result.verified_ingredients.ingredients]
+    return [
+        item.strip().lower()
+        for item in re.split(r"[,;\r\n]+", st.session_state.typed_ingredients)
+        if item.strip()
+    ]
+
+
+def refresh_with_added_products(new_items: list[str]) -> None:
+    """Re-run the workflow with the current products plus new ones, updating the cards in place."""
+    merged = current_ingredient_names()
+    for item in new_items:
+        cleaned = item.strip().lower()
+        if cleaned and cleaned not in merged:
+            merged.append(cleaned)
+
+    preferences = dict(st.session_state.get("last_preferences") or default_preferences())
+    preferences["confirmed_ingredients"] = merged
+    st.session_state.last_preferences = preferences
+    st.session_state.typed_ingredients = ", ".join(merged)
+    st.session_state.ingredient_mode = "typed"
+    st.session_state.monitor_events = []
+
+    with st.spinner(f"👨‍🍳 Adding {', '.join(new_items)} and refreshing your recipes..."):
+        result = run_fridge_agent_workflow(None, preferences, monitor=add_monitor_event)
+    st.session_state.latest_result = result
+    st.session_state.latest_result_json = result.model_dump_json(indent=2)
+    st.session_state.step = 5
+    st.rerun()
+
+
+def extract_added_products(message: str) -> list[str]:
+    """Detect 'I'm buying X' style chat messages and pull out the product names."""
+    if not ADD_INTENT.search(message):
+        return []
+    prompt = f"""
+The user is chatting with a cooking app and may be mentioning food products they are adding or buying.
+Extract ONLY the food product names from this message.
+Return ONLY a JSON array of lowercase product name strings, nothing else.
+If the user is not actually adding or buying any food product, return [].
+
+Message: {message}
+"""
+    try:
+        raw = GemmaClient().generate_text(prompt)
+        start, end = raw.find("["), raw.rfind("]")
+        if start < 0 or end <= start:
+            return []
+        items = json.loads(raw[start : end + 1])
+        return [
+            str(item).strip().lower()
+            for item in items
+            if isinstance(item, (str, int, float)) and 0 < len(str(item).strip()) <= 40
+        ][:6]
+    except (RuntimeError, ValueError):
+        return []
+
+
 # ---------------------------------------------------------------- Step 5
 
 def render_results() -> None:
@@ -286,6 +369,20 @@ def render_results() -> None:
     with col_retry:
         if st.button("🎛️ Same products, different vibe", width="stretch"):
             go_to_step(2)
+
+    with st.container(border=True):
+        st.markdown("**🛒 Got something new? Add products and refresh the recipes:**")
+        add_col, button_col = st.columns([4, 1])
+        new_products_text = add_col.text_input(
+            "Add products",
+            placeholder="e.g. blended beef, sour cream",
+            label_visibility="collapsed",
+            key="add_products_input",
+        )
+        if button_col.button("Refresh 🍽️", type="primary", width="stretch") and new_products_text.strip():
+            refresh_with_added_products(
+                [item for item in re.split(r"[,;\r\n]+", new_products_text) if item.strip()]
+            )
 
     if not result.final_recipes:
         if not result.verified_ingredients.ingredients:
@@ -413,18 +510,30 @@ def render_chat() -> None:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    chat_message = st.chat_input("Substitutions, swaps, how to store leftovers...")
+    chat_message = st.chat_input("Substitutions, swaps... or say what you're buying and I'll refresh the recipes")
     if chat_message:
         st.session_state.chat_messages.append({"role": "user", "content": chat_message})
         with st.chat_message("user"):
             st.markdown(chat_message)
-        with st.chat_message("assistant"):
-            try:
-                answer = GemmaClient().generate_text(build_chat_prompt(chat_message))
-            except RuntimeError as exc:
-                answer = str(exc)
-            st.markdown(answer)
-        st.session_state.chat_messages.append({"role": "assistant", "content": answer})
+
+        added_products = extract_added_products(chat_message)
+        if added_products:
+            reply = (
+                f"🛒 Nice — adding **{', '.join(added_products)}** to your products "
+                "and refreshing the recipes above!"
+            )
+            with st.chat_message("assistant"):
+                st.markdown(reply)
+            st.session_state.chat_messages.append({"role": "assistant", "content": reply})
+            refresh_with_added_products(added_products)
+        else:
+            with st.chat_message("assistant"):
+                try:
+                    answer = GemmaClient().generate_text(build_chat_prompt(chat_message))
+                except RuntimeError as exc:
+                    answer = str(exc)
+                st.markdown(answer)
+            st.session_state.chat_messages.append({"role": "assistant", "content": answer})
 
 
 # ---------------------------------------------------------------- Main
