@@ -23,6 +23,19 @@ prep time, cook time, total time, and concrete cooking steps. Recipes should say
 how to cut ingredients, what heat or cooking environment to use, how long each
 stage takes, and how to recognize doneness.
 
+## User Flow
+
+The webapp (`main.py`) is a four-step wizard designed to be answered in seconds:
+
+1. **What are we cooking with today?** — snap fridge photos, type your products, or skip and cook with everyday staples.
+2. **What's the occasion?** — breakfast, lunch, dinner, snacks, or meal prep.
+3. **What's the vibe?** — quick & easy, healthy, high protein, budget, or comfort food.
+4. **Quick details** — portions, time, allergies, diet style, and available tools.
+
+Recipe cards lead with a one-sentence description of the dish, show time and
+portion chips, split ingredients into "you already have" and "you might need",
+and give numbered plain-language cooking steps.
+
 ## One-Command Start
 
 Double-click `run.bat` (or run `python run.py`). It automates the whole startup

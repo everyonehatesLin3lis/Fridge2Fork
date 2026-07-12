@@ -26,6 +26,7 @@ def run(ranked_recipes: list[RankedRecipe], allergies: list[str]) -> FinalRecipe
     final_recipes = [
         FinalRecipe(
             title=recipe.ranked_recipe.candidate.title,
+            description=recipe.ranked_recipe.candidate.description,
             time_minutes=recipe.ranked_recipe.candidate.time_minutes,
             prep_time_minutes=recipe.ranked_recipe.candidate.prep_time_minutes,
             cook_time_minutes=recipe.ranked_recipe.candidate.cook_time_minutes,

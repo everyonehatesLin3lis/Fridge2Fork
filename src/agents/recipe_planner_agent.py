@@ -51,6 +51,7 @@ Local recipe references retrieved from the Kaggle recipe dataset:
 Return only a JSON array. Each item must have exactly:
 {{
   "title": "recipe title",
+  "description": "one short appetizing sentence in plain everyday language that tells the user what this dish is and why they will like it",
   "time_minutes": 30,
   "prep_time_minutes": 10,
   "cook_time_minutes": 20,
@@ -86,6 +87,9 @@ Rules:
 - Split total time into prep_time_minutes and cook_time_minutes.
 - Use the retrieved local recipe references as grounding for cooking method, ingredient combinations, and timing, but adapt portions and constraints to this user.
 - Steps must read like real cooking, not assembly notes.
+- Write for a home cook who is not a chef: plain everyday words, no culinary jargon (say "cook until golden", not "saute until translucent" without explanation).
+- Every step starts with an action verb and covers exactly one action, so the user can follow along step by step while cooking.
+- The description must make someone instantly understand what the dish is; mention texture or flavor (creamy, crispy, fresh) when honest.
 - Include cut size where it changes cooking time, such as thin slices, bite-size pieces, cubes, or whole pieces.
 - Include heat level, pan/pot/oven/air fryer method, timing, stirring/flipping frequency, and doneness checks.
 - For pan proteins, include minutes per side when relevant.
@@ -154,6 +158,7 @@ def _fallback_recipes(available: list[str], preferences: UserPreferences, recipe
     return [
         RecipeCandidate(
             title=f"{MealPrefix.from_type(preferences.meal_type)} {title_bits} Skillet",
+            description=f"Everything cooked together in one pan: {', '.join(primary[:3])} with simple seasoning, ready in about {total_time} minutes.",
             time_minutes=total_time,
             prep_time_minutes=prep_time,
             cook_time_minutes=max(5, total_time - prep_time),
@@ -172,6 +177,7 @@ def _fallback_recipes(available: list[str], preferences: UserPreferences, recipe
         ),
         RecipeCandidate(
             title=f"{meal_label} {primary[0].title()} Bowl",
+            description=f"A quick warm bowl built around {primary[0]}, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
             time_minutes=min(total_time, 30),
             prep_time_minutes=min(prep_time, 10),
             cook_time_minutes=max(5, min(total_time, 30) - min(prep_time, 10)),

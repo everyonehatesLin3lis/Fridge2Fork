@@ -1,11 +1,10 @@
 # Demo Script
 
-1. Launch the app with `streamlit run app.py`.
-2. For real image detection, launch local mode with `streamlit run main.py` and `APP_MODE=local`.
-3. Upload up to five fridge or food photos.
-4. Review detected ingredients and edit any uncertain items.
-5. Select a cooking goal, allergies, diet style, time limit, portions, tools, gender, height, and weight.
-6. Generate recipes.
-7. Open the debug expander to show the four-agent workflow outputs.
-8. Open the Hermes Agent audit expander and run the audit.
-9. Show that Hermes Agent checks cooking feasibility, portion math, allergy risk, and missing binder/base issues.
+1. Double-click `run.bat` — it starts everything (venv, dependencies, Ollama, webapp).
+2. Step 1: "Sup! What are we cooking with today?" — snap fridge photos, type products, or skip for staples.
+3. Step 2: pick the occasion — breakfast, lunch, dinner, snacks, or meal prep.
+4. Step 3: pick the vibe — quick & easy, healthy, high protein, budget, or comfort food.
+5. Step 4: quick details — portions, time, allergies, diet, tools — then "Cook up my recipes!".
+6. Read the recipe cards: description, time chips, "you already have / you might need", numbered plain-language steps.
+7. Open "Behind the scenes" to show the four-agent workflow trace.
+8. Optionally run the Hermes Agent audit and ask follow-up questions in the chat.

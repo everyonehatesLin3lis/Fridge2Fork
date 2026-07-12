@@ -24,6 +24,7 @@ class IngredientAmount(BaseModel):
 
 class RecipeCandidate(BaseModel):
     title: str = Field(min_length=1)
+    description: str = ""
     time_minutes: int = Field(gt=0)
     prep_time_minutes: int = Field(default=10, gt=0)
     cook_time_minutes: int = Field(default=10, gt=0)
@@ -49,6 +50,7 @@ class SafeRecipe(BaseModel):
 
 class FinalRecipe(BaseModel):
     title: str
+    description: str = ""
     time_minutes: int
     prep_time_minutes: int = 10
     cook_time_minutes: int = 10
