@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 
 from src.orchestrator import run_fridge_agent_workflow
 from src.services.gemma_client import GemmaClient
-from src.services.hermes_agent_audit import run_hermes_agent_audit
 
 
 # Load .env before applying defaults so APP_MODE from .env is respected.
@@ -570,19 +569,6 @@ def render_results() -> None:
             for warning in recipe.safety_warnings:
                 st.warning(warning)
 
-    with st.expander("🔍 Behind the scenes (agent workflow)"):
-        for event_index, event in enumerate(st.session_state.monitor_events, start=1):
-            st.markdown(f"**{event_index}. {event['time']} — {event['agent']}**")
-            st.caption(event["message"])
-        if st.session_state.latest_result is not None:
-            st.json(compact_details(st.session_state.latest_result.model_dump()))
-
-    with st.expander("🕵️ Run Hermes Agent audit"):
-        st.caption("Asks the external Hermes Agent CLI to double-check the recipes are actually cookable.")
-        if st.button("Run audit"):
-            with st.spinner("Auditing the workflow..."):
-                audit = run_hermes_agent_audit(result.model_dump())
-            st.json(audit)
 
 
 # ---------------------------------------------------------------- Chat
@@ -656,20 +642,6 @@ with st.sidebar:
             del st.session_state[key]
         st.rerun()
 
-    with st.expander("📊 LLM Ops"):
-        try:
-            from scripts.llm_ops_report import rag_summary, vision_summary
-
-            st.caption("**Vision model detection** (per analyzed photo)")
-            st.json(vision_summary() or {"status": "no photo runs recorded yet"})
-            st.caption("**Recipe RAG retrieval** (per reference search)")
-            st.json(rag_summary() or {"status": "no searches recorded yet"})
-            st.caption(
-                "Raw data: `data/telemetry/*.jsonl` — full report with budget checks: "
-                "`python scripts/llm_ops_report.py --check`"
-            )
-        except Exception as exc:  # ops panel must never break the app
-            st.warning(f"Could not load telemetry: {exc}")
 
 step = st.session_state.step
 if step == 1:
@@ -687,8 +659,4 @@ if st.session_state.latest_result is not None and step == 5:
     render_chat()
 
 st.divider()
-st.caption(
-    "🍳 FridgeAgent — cooked up with ❤️ for the "
-    "[DEV Weekend Challenge: Passion Edition](https://dev.to/challenges/weekend-2026-07-09). "
-    "Passion here means loving food enough to never waste it."
-)
+st.caption("🍳 FridgeAgent — less waste, more love.")

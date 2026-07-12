@@ -13,9 +13,10 @@ entire startup chain so no other terminal commands are needed:
 5. Launches the Streamlit webapp and opens it in the browser.
 
 Flags:
-    --mock    force APP_MODE=mock (no model calls)
-    --google  force APP_MODE=google (needs GOOGLE_API_KEY in .env)
-    --local   force APP_MODE=local (needs Ollama)
+    --mock     force APP_MODE=mock (no model calls)
+    --google   force APP_MODE=google (needs GOOGLE_API_KEY in .env)
+    --local    force APP_MODE=local (needs Ollama)
+    --classic  launch the classic Streamlit UI instead of the web experience
 """
 
 from __future__ import annotations
@@ -172,13 +173,20 @@ def main() -> int:
         log("Note: local recipe RAG index not found; recipes still work without it.")
         log("Build it later with scripts/download_recipe_dataset.py + scripts/build_recipe_rag_index.py.")
 
-    port = find_free_port()
-    log(f"Starting FridgeAgent webapp in APP_MODE={mode} on http://localhost:{port}")
+    classic = "--classic" in sys.argv
+    port = find_free_port(8501 if classic else 8600)
+    log(f"Starting FridgeAgent in APP_MODE={mode} on http://localhost:{port}")
     log("Press Ctrl+C (or close this window) to stop.")
-    app = subprocess.Popen(
-        [str(VENV_PYTHON), "-m", "streamlit", "run", "main.py", "--server.port", str(port)],
-        cwd=PROJECT_ROOT,
-    )
+    if classic:
+        command = [str(VENV_PYTHON), "-m", "streamlit", "run", "main.py", "--server.port", str(port)]
+    else:
+        command = [str(VENV_PYTHON), "-m", "uvicorn", "server:app", "--port", str(port)]
+    app = subprocess.Popen(command, cwd=PROJECT_ROOT)
+    if not classic:
+        import webbrowser
+
+        time.sleep(2.5)
+        webbrowser.open(f"http://localhost:{port}")
     try:
         return app.wait()
     except KeyboardInterrupt:
