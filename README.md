@@ -1,208 +1,216 @@
-# FridgeAgent
+# 🍳 FridgeAgent
 
-FridgeAgent is a multi-agent Gemma 4 assistant that turns fridge photos into practical recipes.
+**A fridge-to-recipe assistant for people who love food too much to waste it.**
 
-It helps a user upload up to five fridge or food photos, review detected ingredients, add cooking goals and constraints, then generate realistic recipe cards that minimize missing ingredients and reduce food waste.
+Snap photos of your fridge, answer three friendly questions, and a four-agent AI
+workflow turns what you actually have into real, cookable recipes — with exact
+amounts for your portions and steps a tired human can follow at 9pm.
 
-FridgeAgent is not one big recipe prompt. It is a four-agent workflow where each Gemma-powered agent handles a bounded part of the cooking decision process: vision and ingredient verification, user constraints, RAG-grounded recipe planning with portion math and rough nutrition, and final safety-checked recipe writing.
+Built up for the [DEV Weekend Challenge: Passion Edition](https://dev.to/challenges/weekend-2026-07-09).
+Our take on passion: the everyday kind — loving food enough to cook with what
+you've got instead of letting it expire.
 
-## Why Gemma 4
+## Run It (One Command)
 
-Gemma 4 fits this project because the task is naturally multimodal and constraint-heavy. The system needs to understand a fridge image, turn visible food into structured ingredients, reason over allergies and cooking goals, and produce practical recipes with minimal missing items.
+Double-click **`run.bat`**. That's the whole setup:
 
-In local testing, the current model was useful for orchestration and structured
-recipe generation, but it did not always produce enough recipe variety on its
-own. To improve creativity without making the app uncontrolled, FridgeAgent uses
-the Kaggle recipe dataset as a reference database through local RAG. Gemma still
-plans the final user-specific recipe, but it can now ground ideas in retrieved
-recipe patterns instead of repeating the same small set of meals.
+1. Creates the virtual environment and installs dependencies (only when
+   `requirements.txt` changed).
+2. Starts Ollama in the background if it isn't running; pulls the models on
+   first use.
+3. Falls back to Google Gemini (if `GOOGLE_API_KEY` is set) or mock mode when
+   no local model is available — the app always starts.
+4. Opens the wizard in your browser.
 
-The current recipe output also puts extra emphasis on measurable execution:
-ingredient amounts per portion, total product needed for the requested portions,
-prep time, cook time, total time, and concrete cooking steps. Recipes should say
-how to cut ingredients, what heat or cooking environment to use, how long each
-stage takes, and how to recognize doneness.
+Optional: `run.bat --mock`, `run.bat --google`, `run.bat --local`.
 
-## User Flow
+## The Flow
 
-The webapp (`main.py`) is a four-step wizard designed to be answered in seconds:
+1. **"Sup! What are we cooking with today?"** — 📷 snap your fridge, ⌨️ type
+   your products, or 🎲 skip and cook with staples
+2. **"What's the occasion?"** — breakfast / lunch / dinner / snacks / meal prep
+3. **"What are you craving?"** — quick & easy / healthy / high protein / budget / comfort food
+4. Ten seconds of details → **recipe cards**: description, time chips,
+   "you already have / you might need", numbered plain-language steps
+5. Tell the chat *"I'm buying blended beef"* → the cards refresh in place with
+   recipes built around blended beef. Or hit **🎲 Show me different recipes**
+   for a fresh batch from the same fridge.
 
-1. **What are we cooking with today?** — snap fridge photos, type your products, or skip and cook with everyday staples.
-2. **What's the occasion?** — breakfast, lunch, dinner, snacks, or meal prep.
-3. **What's the vibe?** — quick & easy, healthy, high protein, budget, or comfort food.
-4. **Quick details** — portions, time, allergies, diet style, and available tools.
+---
 
-Recipe cards lead with a one-sentence description of the dish, show time and
-portion chips, split ingredients into "you already have" and "you might need",
-and give numbered plain-language cooking steps.
+## The Journey
 
-## One-Command Start
+This project was rebuilt over one weekend, and almost nothing went according to
+plan. Here's what actually happened — the bugs, the evidence, and the fixes —
+because the debugging turned out to be the most interesting part.
 
-Double-click `run.bat` (or run `python run.py`). It automates the whole startup
-chain — no other terminal commands are needed:
+### Chapter 1: "Nothing happens"
 
-1. Creates the virtual environment on first run and installs dependencies when
-   `requirements.txt` changed.
-2. Reads `.env` (if present) for the model mode.
-3. For local mode it starts Ollama automatically if it is not running and pulls
-   the model on first use.
-4. If no model backend is available it falls back to mock mode so the app
-   always starts, then launches the webapp in your browser.
+First real test: pick ingredients, click **Generate recipes**... nothing.
+No error, no recipes, no clue.
 
-Optional flags: `run.bat --mock`, `run.bat --google`, `run.bat --local`.
+It turned out to be *three* stacked problems:
 
-## Manual Setup
+- **Results vanished on rerun.** Recipe cards only rendered during the submit
+  event; any later interaction re-ran the Streamlit script and wiped them.
+  Fix: results live in `session_state` and render on every run.
+- **The debug monitor was killing the run.** Our live agent-trace panel
+  re-sent full RAG dumps and model outputs over the websocket on *every*
+  workflow event. Big payloads froze the browser tab, the websocket dropped,
+  and Streamlit silently killed the script mid-workflow — recipes were being
+  generated and thrown away. Fix: monitor payloads are compacted (capped
+  lists, truncated strings); full data stays in the "Agent outputs" expander.
+- **Timeouts pretending to be results.** Local model calls were capped at a
+  hardcoded 120s while photo analysis alone measured ~63s. The timeout was
+  caught, swallowed, and surfaced as "zero ingredients found". Fix:
+  `OLLAMA_TIMEOUT_SECONDS` (default 300) and a loud, specific error state in
+  the UI with an inline "type your products instead" recovery box.
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-streamlit run app.py
+**Lesson:** a silent failure path is a lie you tell your future self.
+
+### Chapter 2: The photos that died between steps
+
+With the wizard UI, users pick photos on step 1 and generate on step 4.
+Detection kept coming back empty — and telemetry (see below) showed why:
+
+```json
+{"image_bytes": 0, "latency_ms": 11036, "raw_response_chars": 60, "ingredient_count": 0}
 ```
 
-Copy `.env.example` to `.env` for live model settings. The app defaults to `APP_MODE=mock`, so it can run without API keys.
+Zero image bytes. Streamlit frees uploaded file data the moment the uploader
+widget leaves the screen — so by step 4, the photos were gone and the model was
+politely analyzing *nothing*. Fix: copy the raw bytes into session state the
+moment photos are picked ("N photo(s) locked in ✅").
 
-## Local Gemma 4 Run
+**Lesson:** know your framework's widget lifecycle before building a wizard on it.
 
-Install and start Ollama, then make sure the local model is available:
+### Chapter 3: The model that hallucinated a fridge
 
-```powershell
-ollama serve
-ollama run gemma4:e4b
+The scariest bug, because it looked like success. Early on, photo detection
+returned a lovely list: milk, eggs, butter, deli meat... Except those weren't
+in the photo. The telemetry made the pattern obvious:
+
+| | Real analysis | Our runs |
+|---|---|---|
+| Latency | ~63s | 11–26s |
+| Response size | ~2,700 chars | 60–200 chars |
+| Detections | 8 items | 0 items (or invented ones) |
+
+Direct API tests confirmed it: `gemma4:e4b`'s vision path in Ollama decodes the
+image (the server logs literally say `image decoded in 93ms`) but the
+embeddings never reach the language model, which answers "no image provided" —
+or worse, **invents a statistically plausible fridge**. Re-pulling the model
+didn't help; no Ollama update was available.
+
+The fix that worked, verified on 8 real test photos (0/8 detected before, **8/8 after**, 5–12s each):
+
+- **A dedicated vision model** — `VISION_MODEL_NAME=llava:7b` handles photos
+  while `gemma4:e4b` keeps writing recipes (it's genuinely good at that).
+  `run.bat` pulls it automatically.
+- **`format=json`** — Ollama constrains the output to valid JSON, because
+  vision models freestyle otherwise.
+- **A tolerant parser** — a 7B vision model will not fill a deeply nested
+  schema. The prompt asks for a flat shape and the parser fills in
+  category/quantity/confidence defaults, instead of throwing away a correct
+  answer because it came in the wrong outfit.
+
+**Lesson:** "the model returned something" is not the same as "the model saw
+your image". Log enough to tell the difference.
+
+### Chapter 4: The same two recipes, forever
+
+Refreshing with the same ingredients produced the same recipes — technically
+correct, emotionally deflating. And newly added products ("I'm buying blended
+beef!") got tossed into the ingredient pool and promptly ignored.
+
+Fixes:
+
+- The planner runs in **creative mode** (temperature 0.95 + random seed), so
+  identical inputs stop producing identical outputs.
+- Every refresh passes the **previously shown titles** back with an explicit
+  *"do not repeat these — change technique or cuisine"* instruction.
+- Added products are marked **must-use**: *"every recipe MUST use them as a
+  central ingredient, not a garnish"*, and they lead the ingredient list so
+  even the deterministic fallback recipes anchor on them.
+
+Verified live: pasta/eggs/parmesan/onion gave *"Creamy Onion & Parmesan Pasta
+Scramble"* and *"Cheesy Onion Pasta Bake"*; refreshing with blended beef gave
+*"Inside Out Ravioli Skillet"* and *"Blended Beef Bowl"* — no repeats, beef
+front and center in both.
+
+### What kept us honest: telemetry
+
+Every one of these bugs was found or confirmed with a tiny LLM-ops layer the
+app runs automatically (git-ignored JSONL, no setup):
+
+- `data/telemetry/vision_detection.jsonl` — per photo: latency, image bytes,
+  JSON parse success, ingredient count, confidence min/mean/max
+- `data/telemetry/rag_retrieval.jsonl` — per search: latency, index size, hit
+  count, top score
+
+Three ways to look at it:
+
+1. **📊 LLM Ops panel** in the app sidebar (live summaries)
+2. `python scripts/llm_ops_report.py --check` — full report; exits non-zero
+   when performance budgets are violated
+3. **CI** (`.github/workflows/ci.yml`) — every push runs the 51-test suite
+   (including RAG correctness + latency budget against a committed fixture
+   index) plus the budget check, and uploads the run's telemetry as an
+   artifact so retrieval performance is comparable between commits
+
+---
+
+## Under the Hood
+
+```text
+Photos / typed products
+   -> Vision Agent        (detect, merge, flag low-confidence for confirmation)
+   -> Constraints Agent   (portions, time, allergies, diet, tools)
+   -> Recipe Planner      (RAG retrieval, portion math, feasibility repair)
+   -> Final Recipe Agent  (allergen filtering, final cards)
+   -> Recipe cards + optional external Hermes Agent audit
 ```
 
-Run the local deployment entrypoint:
+Handoffs are controlled by `HermesOrchestrator` — a deterministic Python
+message-passing layer, not another LLM. It enforces a fixed four-stage order,
+prevents loops, and keeps a trace you can inspect in the "Behind the scenes"
+expander. One hard rule: **if no ingredients can be verified, the pipeline
+stops** — the planner is never allowed to invent what's in your fridge.
 
-```powershell
-.\.venv\Scripts\streamlit.exe run main.py
-```
+Safety details we care about: ingredients detected below 0.5 confidence are
+never cooked with silently — the app asks you to confirm them ("possibly
+chicken (0.30)" becomes a question, not a dinner). Allergen conflicts remove
+recipes entirely, and packaged-ingredient warnings are added for hidden
+allergens.
 
-`main.py` defaults to:
-
-```env
-APP_MODE=local
-GEMMA_MODEL_NAME=gemma4:e4b
-OLLAMA_BASE_URL=http://localhost:11434
-```
-
-## Mock And Live Modes
-
-- `APP_MODE=mock`: deterministic text/demo flow, no paid API calls. Mock mode does not inspect uploaded images; type confirmed ingredients for demos.
-- `APP_MODE=local`: calls a local Ollama-compatible model through `src/services/gemma_client.py`. Recipe text uses `GEMMA_MODEL_NAME`; photo analysis uses `VISION_MODEL_NAME` (default `llava:7b`, pulled automatically by `run.bat`) because `gemma4:e4b`'s Ollama vision path returns "no image" on some setups.
-- `APP_MODE=google`: calls the real Google AI (Gemini) API through the `google-genai` SDK. Set `GOOGLE_API_KEY` (from [aistudio.google.com/apikey](https://aistudio.google.com/apikey)) and optionally `GOOGLE_MODEL_NAME` (default `gemini-2.0-flash`). Works without any local model install, including image ingredient detection.
-- `APP_MODE=live`: routes calls through `src/services/gemma_client.py`. Provider-specific API wiring can be added there without touching agent files.
-
-## Recipe RAG
-
-The Recipe Planner can use a small local search index built from the Kaggle
-dataset `wilmerarltstrmberg/recipe-dataset-over-2m`. Download and index it with:
+**Recipe RAG:** the planner grounds its ideas in a compact local index sampled
+from the Kaggle `recipe-dataset-over-2m` dataset (~25k records, lexical
+scoring, ~0.8s mean retrieval). Build it with:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\download_recipe_dataset.py
 .\.venv\Scripts\python.exe scripts\build_recipe_rag_index.py --dataset-path "PATH_PRINTED_BY_DOWNLOAD" --limit 25000
 ```
 
-The index is stored at `data/recipe_rag_index.jsonl` and is ignored by Git. When
-present, Gemma receives a few retrieved recipe references for cooking patterns,
-timing, and ingredient combinations before it plans user-specific portions.
+The app works without the index — recipes are just less varied.
 
-For speed, FridgeAgent does not load the full 2M+ recipe dataset into Streamlit
-at runtime. The build script creates a compact local JSONL index sample, and the
-Recipe Planner searches only a few relevant references per run. This keeps
-recipe grounding useful without slowing down the interactive demo.
+## Modes
 
-## Architecture
+| Mode | What it does |
+|---|---|
+| `APP_MODE=local` (default) | Recipes via `GEMMA_MODEL_NAME` (`gemma4:e4b`), photos via `VISION_MODEL_NAME` (`llava:7b`), both through Ollama |
+| `APP_MODE=google` | Everything through the real Gemini API (`google-genai` SDK, default `gemini-2.0-flash`). Free key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey). No local GPU needed |
+| `APP_MODE=mock` | Deterministic demo flow, no model calls at all |
 
-```text
-Fridge photo -> Hermes -> Vision Agent
--> Hermes -> Constraints Agent
--> Hermes -> Recipe Planner Agent
--> Hermes -> Final Recipe Agent
--> Recipe cards
--> optional Hermes Agent audit
-```
-
-Hermes is the deterministic message-passing layer in `src/orchestration/hermes.py`.
-It does not identify food or write recipes. It enforces a fixed four-stage order,
-prevents repeated stages, builds clean handoff payloads, and stores a debug trace
-so the multi-agent flow is visible in tests and Streamlit output.
-
-This project uses Hermes as a strict local orchestration layer, not as another
-LLM agent. That improved speed and reliability because the app no longer asks a
-model to decide every handoff. Hermes runs in Python, keeps the workflow bounded
-to four stages, prevents loops, and passes only the structured data each stage
-needs.
-
-The four specialist agents are:
-
-- `vision_agent`: detects visible ingredients across up to five uploaded photos, merges duplicate detections, normalizes names, flags uncertainty, and prepares verified ingredients.
-- `constraints_agent`: validates user goals, allergies, diet, portions, cooking time, and tools.
-- `recipe_planner_agent`: searches the local recipe RAG index, plans recipes, calculates per-portion and total amounts, runs a feasibility check, repairs unrealistic dish drafts, writes concrete cooking steps, and ranks rough nutrition fit.
-- `final_recipe_agent`: filters unsafe recipes, adds allergy warnings, and writes final recipe cards.
-
-## Hermes Agent Audit Layer
-
-For the Hermes Agent Challenge, FridgeAgent includes an optional external audit
-layer that calls the real Nous Research Hermes Agent CLI:
+Copy `.env.example` to `.env` to configure. Manual start, if you prefer it over
+`run.bat`:
 
 ```powershell
-hermes chat -Q -q "<recipe audit prompt>"
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+streamlit run main.py
 ```
-
-The audit prompt is built from:
-
-- `hermes/fridge2fork_context.md`
-- `hermes/cooking_feasibility_rules.md`
-- `hermes/recipe_audit_task.md`
-- the generated FridgeAgent workflow JSON
-
-Hermes Agent reviews whether the generated recipe can actually be cooked. It
-checks ingredient roles, missing binders or bases, allergy risks, portion math,
-measurement rows, and cooking feasibility. This is separate from the in-app
-`HermesOrchestrator`: the orchestrator controls handoffs, while Hermes Agent is
-used as an external agentic critic and tool-driven audit layer.
-
-Run the audit manually with:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\hermes_recipe_audit.py --input data\sample_outputs\eight_ingredient_debug.json
-```
-
-If the `hermes` CLI is not installed or configured, the script returns setup
-guidance plus a deterministic fallback audit so the app remains usable.
-
-## LLM Telemetry And Ops Report
-
-The app automatically collects lightweight LLM engineering telemetry while it
-runs (no extra setup, files are git-ignored):
-
-- `data/telemetry/vision_detection.jsonl`: one row per analyzed photo with
-  model latency, JSON parse success, ingredient count, and confidence
-  min/mean/max, so vision quality can be tracked over time.
-- `data/telemetry/rag_retrieval.jsonl`: one row per recipe reference search
-  with retrieval latency, result count, and top score, so RAG performance and
-  hit rate are measurable.
-
-Summarize everything that has been collected:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\llm_ops_report.py
-```
-
-Add `--check` to fail (exit code 1) when performance budgets are violated —
-this is what CI runs on every push.
-
-## CI
-
-`.github/workflows/ci.yml` runs on every push and pull request:
-
-1. the full pytest suite in mock mode, including RAG retrieval correctness and
-   a retrieval latency budget against a committed fixture index, and
-2. `scripts/llm_ops_report.py --check`, which enforces the RAG latency and
-   vision parse-success budgets over telemetry collected during the CI run.
-
-Telemetry produced during CI is uploaded as a build artifact so retrieval
-performance can be compared between commits.
 
 ## Tests
 
@@ -210,58 +218,22 @@ performance can be compared between commits.
 pytest
 ```
 
-## Troubleshooting
-
-### Local Gemma Timeout
-
-If Streamlit shows a traceback ending with:
-
-```text
-TimeoutError: timed out
-...
-src/services/gemma_client.py
-with urlopen(request, timeout=120) as response
-```
-
-the app reached Ollama, but the local model did not finish before the client timeout. This is more likely with large images, long prompts, many portions, or a slower CPU/GPU.
-
-Try:
-
-```powershell
-ollama list
-ollama ps
-```
-
-Then restart the app and use fewer typed ingredients or skip the image for a quick test:
-
-```powershell
-Get-Process streamlit,python -ErrorAction SilentlyContinue | Stop-Process -Force
-.\.venv\Scripts\streamlit.exe run main.py
-```
-
-The code catches local Gemma timeouts and lets agents fall back where possible, so a slow model should not crash the whole workflow.
-
-### Low-Confidence Vision Detections
-
-The Vision Agent can struggle with unclear packaging, labels, and product variants. For example, a carton may be cow milk, almond milk, oat milk, or lactose-free milk, which matters for allergies, diet style, and nutrition.
-
-Current rule:
-
-- Ingredients with confidence below `0.5` are not sent directly to recipe planning.
-- They are collected as low-confidence items.
-- The app asks the user to confirm what those products are.
-- Confirmed typed ingredients override uncertain photo detections.
-
-This keeps the app from treating uncertain visual guesses as safe cooking facts.
+51 tests: agent workflow in mock mode, RAG retrieval correctness and latency
+budgets, telemetry collection, Google AI client, JSON parsing edge cases.
 
 ## Limitations
 
 - Nutrition values are rough estimates, not medical advice.
-- Mock image detection uses fixed demo ingredients.
-- Live Gemma API transport is centralized but intentionally provider-light for the MVP.
+- Local photo analysis takes ~5–12s per photo; local recipe generation ~60–90s.
+- The RAG index is a compact sample for speed, not the full 2M-recipe dataset.
+- Mock mode cannot inspect images — type your products instead.
 
-## Future Improvements
+## Disclosure
 
-- Add real Gemma 4 multimodal provider integration.
-- Add sample screenshots and a demo GIF.
-- Add a small library of evaluation images and expected outputs.
+The four-agent core (vision, constraints, planner, final recipe writer)
+predates the Passion Edition challenge and was originally built for an earlier
+challenge. The challenge-weekend work: the four-step wizard UI, the
+one-command launcher, the LLM telemetry + ops report + CI pipeline, the entire
+vision debugging saga and dedicated-vision-model fix, recipe variety on
+refresh, must-use added products, chat-triggered recipe refreshes, and the
+Google AI provider.

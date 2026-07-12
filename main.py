@@ -111,7 +111,7 @@ def back_button(step: int) -> None:
 
 def render_step_ingredients() -> None:
     wizard_header(1, 4, "🍳 Sup! What are we cooking with today?",
-                  "Pick whichever is easiest — you can always adjust later.")
+                  "Cooking is love made visible — let's start with what's already in your kitchen.")
 
     col_photo, col_type, col_surprise = st.columns(3)
     with col_photo:
@@ -175,7 +175,8 @@ def render_step_ingredients() -> None:
 # ---------------------------------------------------------------- Step 2
 
 def render_step_meal() -> None:
-    wizard_header(2, 4, "🍽️ What's the occasion?", "Are we cooking for...")
+    wizard_header(2, 4, "🍽️ What's the occasion?",
+                  "Lazy Sunday breakfast? Match-day snacks? Every meal deserves a little passion.")
     columns = st.columns(len(MEAL_OPTIONS))
     for column, (value, label) in zip(columns, MEAL_OPTIONS):
         with column:
@@ -190,7 +191,8 @@ def render_step_meal() -> None:
 # ---------------------------------------------------------------- Step 3
 
 def render_step_goal() -> None:
-    wizard_header(3, 4, "✨ What's the vibe today?", "Pick what matters most right now.")
+    wizard_header(3, 4, "✨ What are you craving today?",
+                  "Pick what your heart (or stomach) says. There are no wrong answers.")
     columns = st.columns(len(GOAL_OPTIONS))
     for column, (value, label) in zip(columns, GOAL_OPTIONS):
         with column:
@@ -205,7 +207,8 @@ def render_step_goal() -> None:
 # ---------------------------------------------------------------- Step 4
 
 def render_step_details() -> None:
-    wizard_header(4, 4, "🧾 Last quick details", "Almost there — this takes 10 seconds.")
+    wizard_header(4, 4, "🧾 Last quick details",
+                  "Ten seconds of boring questions, then we get to the good part.")
 
     with st.form("details"):
         col_a, col_b = st.columns(2)
@@ -383,6 +386,7 @@ def render_results() -> None:
         return
 
     st.title("🍽️ Here's what you can make!")
+    st.caption("Cooked from what you already have — less waste, more love. ❤️")
 
     col_restart, col_retry, col_reroll = st.columns(3)
     with col_restart:
@@ -612,3 +616,10 @@ else:
 
 if st.session_state.latest_result is not None and step == 5:
     render_chat()
+
+st.divider()
+st.caption(
+    "🍳 FridgeAgent — cooked up with ❤️ for the "
+    "[DEV Weekend Challenge: Passion Edition](https://dev.to/challenges/weekend-2026-07-09). "
+    "Passion here means loving food enough to never waste it."
+)
