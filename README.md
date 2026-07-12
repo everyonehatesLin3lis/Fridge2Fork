@@ -284,28 +284,42 @@ ignore rules. The recommended deployment uses the Cloud Run service identity
 to call Vertex AI, so no API key is stored or sent to the browser.
 
 Prerequisites: a Google Cloud project with billing enabled and the Google Cloud
-CLI. The commands below create a dedicated runtime service account with only
-the Vertex AI User role.
+CLI. The commands below keep build and runtime permissions separate: the build
+identity gets Cloud Run Builder, while the runtime identity gets Vertex AI
+User.
 
 ```powershell
 $PROJECT_ID = "your-google-cloud-project-id"
 $REGION = "europe-north1"
-$SERVICE_ACCOUNT = "fridgeagent-run@$PROJECT_ID.iam.gserviceaccount.com"
+$RUNTIME_ACCOUNT = "fridgeagent-run@$PROJECT_ID.iam.gserviceaccount.com"
+$BUILD_ACCOUNT = "fridgeagent-build@$PROJECT_ID.iam.gserviceaccount.com"
+$DEPLOYER_ACCOUNT = (gcloud config get-value account)
 
 gcloud auth login
 gcloud config set project $PROJECT_ID
 gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com aiplatform.googleapis.com
 
 gcloud iam service-accounts create fridgeagent-run --display-name="FridgeAgent Cloud Run"
+gcloud iam service-accounts create fridgeagent-build --display-name="FridgeAgent Cloud Build"
+
 gcloud projects add-iam-policy-binding $PROJECT_ID `
-  --member="serviceAccount:$SERVICE_ACCOUNT" `
+  --member="serviceAccount:$RUNTIME_ACCOUNT" `
   --role="roles/aiplatform.user"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID `
+  --member="serviceAccount:$BUILD_ACCOUNT" `
+  --role="roles/run.builder"
+
+gcloud iam service-accounts add-iam-policy-binding $BUILD_ACCOUNT `
+  --member="user:$DEPLOYER_ACCOUNT" `
+  --role="roles/iam.serviceAccountUser"
 
 gcloud run deploy fridgeagent `
   --source . `
+  --build-service-account "projects/$PROJECT_ID/serviceAccounts/$BUILD_ACCOUNT" `
   --region $REGION `
   --allow-unauthenticated `
-  --service-account $SERVICE_ACCOUNT `
+  --service-account $RUNTIME_ACCOUNT `
   --set-env-vars "APP_MODE=google,GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=global,GOOGLE_MODEL_NAME=gemini-2.5-flash" `
   --memory 1Gi `
   --concurrency 4 `
