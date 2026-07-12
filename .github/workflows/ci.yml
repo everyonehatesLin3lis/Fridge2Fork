@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run test suite (mock mode, includes RAG retrieval + latency budget)
+        env:
+          APP_MODE: mock
+          TELEMETRY_DIR: ${{ runner.temp }}/telemetry
+        run: pytest -q
+
+      - name: LLM ops report with performance budgets
+        env:
+          TELEMETRY_DIR: ${{ runner.temp }}/telemetry
+        run: python scripts/llm_ops_report.py --check
+
+      - name: Upload telemetry collected during CI run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-telemetry
+          path: ${{ runner.temp }}/telemetry/
+          if-no-files-found: ignore

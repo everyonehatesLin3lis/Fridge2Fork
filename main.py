@@ -26,6 +26,29 @@ if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = []
 if "latest_result_json" not in st.session_state:
     st.session_state.latest_result_json = None
+if "latest_result" not in st.session_state:
+    st.session_state.latest_result = None
+
+
+def compact_details(value: object, depth: int = 0) -> object:
+    """Shrink monitor payloads so live trace rendering stays light.
+
+    Full agent outputs stay available in the 'Agent outputs' expander; the live
+    monitor only needs summaries. Shipping full RAG reference dumps and model
+    dumps on every event can freeze the browser tab and kill the run.
+    """
+    if depth >= 4:
+        return "..."
+    if isinstance(value, dict):
+        return {key: compact_details(item, depth + 1) for key, item in list(value.items())[:16]}
+    if isinstance(value, list):
+        compacted = [compact_details(item, depth + 1) for item in value[:4]]
+        if len(value) > 4:
+            compacted.append(f"... {len(value) - 4} more items")
+        return compacted
+    if isinstance(value, str) and len(value) > 240:
+        return value[:240] + "..."
+    return value
 
 
 def add_monitor_event(agent_name: str, message: str, details: dict | None = None) -> None:
@@ -34,7 +57,7 @@ def add_monitor_event(agent_name: str, message: str, details: dict | None = None
             "time": datetime.now().strftime("%H:%M:%S"),
             "agent": agent_name,
             "message": message,
-            "details": details or {},
+            "details": compact_details(details or {}),
         }
     )
     if monitor_slot is not None:
@@ -65,10 +88,22 @@ def render_monitor(container=st) -> None:
 def render_recipe_cards(result: object) -> None:
     st.subheader("Recipe cards")
     if not result.final_recipes:
-        st.error(
-            "No safe recipe cards were produced with the current constraints. Try confirming ambiguous ingredients, "
-            "removing conflicting items, reducing allergies only if accurate, increasing time, or choosing best effort."
-        )
+        if not result.verified_ingredients.ingredients:
+            st.error(
+                "No recipes were generated because no ingredients could be verified. "
+                "The vision model did not return usable detections from the uploaded photo(s)."
+            )
+            for question in result.verified_ingredients.clarification_questions:
+                st.warning(question)
+            st.info(
+                "Type your ingredients into the 'Confirmed ingredients' box above and press "
+                "Generate recipes again. Typed ingredients always work, even when photo detection fails."
+            )
+        else:
+            st.error(
+                "No safe recipe cards were produced with the current constraints. Try confirming ambiguous ingredients, "
+                "removing conflicting items, reducing allergies only if accurate, increasing time, or choosing best effort."
+            )
         return
 
     for recipe in result.final_recipes:
@@ -256,8 +291,13 @@ if submitted:
     if confirmed_ingredients:
         raw_preferences["confirmed_ingredients"] = confirmed_ingredients
 
-    result = run_fridge_agent_workflow(uploaded_image, raw_preferences, monitor=add_monitor_event)
+    with st.spinner("Running the four-agent workflow. Local model calls can take a minute..."):
+        result = run_fridge_agent_workflow(uploaded_image, raw_preferences, monitor=add_monitor_event)
+    st.session_state.latest_result = result
     st.session_state.latest_result_json = result.model_dump_json(indent=2)
+
+result = st.session_state.latest_result
+if result is not None:
     render_recipe_cards(result)
 
     with st.expander("Ask local Gemma 4 to critique the plan"):

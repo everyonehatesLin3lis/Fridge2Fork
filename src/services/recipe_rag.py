@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from src.services.telemetry import Stopwatch, log_event
+
 
 DEFAULT_INDEX_PATH = Path("data/recipe_rag_index.jsonl")
 
@@ -47,6 +49,30 @@ class RecipeRagStore:
         limit: int = 3,
     ) -> list[RecipeReference]:
         """Return the most relevant recipe references for confirmed ingredients."""
+        with Stopwatch() as watch:
+            results = self._search(ingredients, goal, tools, limit)
+        log_event(
+            "rag_retrieval",
+            {
+                "index_ready": self.is_ready(),
+                "index_records": len(self._records) if self._records is not None else 0,
+                "latency_ms": watch.elapsed_ms,
+                "query_ingredients": ingredients,
+                "goal": goal,
+                "result_count": len(results),
+                "top_score": results[0].score if results else None,
+                "result_titles": [reference.title[:60] for reference in results],
+            },
+        )
+        return results
+
+    def _search(
+        self,
+        ingredients: list[str],
+        goal: str,
+        tools: list[str] | None,
+        limit: int,
+    ) -> list[RecipeReference]:
         if not self.is_ready():
             return []
         if not ingredients:

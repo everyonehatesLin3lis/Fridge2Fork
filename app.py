@@ -22,13 +22,34 @@ if "monitor_events" not in st.session_state:
     st.session_state.monitor_events = []
 
 
+def compact_details(value: Any, depth: int = 0) -> Any:
+    """Shrink monitor payloads so debug rendering stays light.
+
+    Full agent outputs stay available in the 'Agent outputs' expander; shipping
+    full RAG reference dumps and model dumps for every event can freeze the
+    browser tab.
+    """
+    if depth >= 4:
+        return "..."
+    if isinstance(value, dict):
+        return {key: compact_details(item, depth + 1) for key, item in list(value.items())[:16]}
+    if isinstance(value, list):
+        compacted = [compact_details(item, depth + 1) for item in value[:4]]
+        if len(value) > 4:
+            compacted.append(f"... {len(value) - 4} more items")
+        return compacted
+    if isinstance(value, str) and len(value) > 240:
+        return value[:240] + "..."
+    return value
+
+
 def add_monitor_event(agent_name: str, message: str, details: dict[str, Any] | None = None) -> None:
     st.session_state.monitor_events.append(
         {
             "time": datetime.now().strftime("%H:%M:%S"),
             "agent": agent_name,
             "message": message,
-            "details": details or {},
+            "details": compact_details(details or {}),
         }
     )
 
@@ -68,7 +89,19 @@ def recipe_metrics(result: Any) -> dict[str, Any]:
 def render_recipe_cards(result: Any) -> None:
     st.subheader("Recipe cards")
     if not result.final_recipes:
-        st.error("No safe recipe cards were produced with the current constraints.")
+        if not result.verified_ingredients.ingredients:
+            st.error(
+                "No recipes were generated because no ingredients could be verified. "
+                "The vision model did not return usable detections from the uploaded photo(s)."
+            )
+            for question in result.verified_ingredients.clarification_questions:
+                st.warning(question)
+            st.info(
+                "Type your ingredients into the 'Confirmed ingredients' box above and press "
+                "Generate recipes again. Typed ingredients always work, even when photo detection fails."
+            )
+        else:
+            st.error("No safe recipe cards were produced with the current constraints.")
         return
 
     for recipe in result.final_recipes:
@@ -229,8 +262,12 @@ if submitted:
     if confirmed_ingredients:
         raw_preferences["confirmed_ingredients"] = confirmed_ingredients
 
-    result = run_fridge_agent_workflow(uploaded_image, raw_preferences, monitor=add_monitor_event)
+    with st.spinner("Running the four-agent workflow..."):
+        result = run_fridge_agent_workflow(uploaded_image, raw_preferences, monitor=add_monitor_event)
+    st.session_state.latest_result = result
 
+result = st.session_state.get("latest_result")
+if result is not None:
     metrics = recipe_metrics(result)
     st.subheader("Run metrics")
     metric_cols = st.columns(5)

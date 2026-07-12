@@ -8,6 +8,7 @@ from src.config import get_settings
 from src.schemas.ingredient_schema import Ingredient, IngredientExtractionResponse, VerifiedIngredients
 from src.services.gemma_client import GemmaClient
 from src.services.json_parser import parse_json_response
+from src.services.telemetry import Stopwatch, log_event
 
 
 class VisionAgentResult(BaseModel):
@@ -97,15 +98,54 @@ Return only JSON with this exact shape:
 Do not invent hidden ingredients. If unsure, use lower confidence and add the item to uncertain_items.
 Separate visible-object confidence from ingredient certainty by using lower confidence for unclear packages.
 """
-    try:
-        return parse_json_response(GemmaClient().generate_from_image(image, prompt), IngredientExtractionResponse)
-    except (RuntimeError, ValueError):
-        return IngredientExtractionResponse(
-            ingredients=[],
-            uncertain_items=[
-                "The vision model could not parse the image. Confirm ingredients manually or retry with a clearer photo."
-            ],
-        )
+    raw_response = ""
+    error: Exception | None = None
+    result: IngredientExtractionResponse | None = None
+    with Stopwatch() as watch:
+        try:
+            raw_response = GemmaClient().generate_from_image(image, prompt)
+            result = parse_json_response(raw_response, IngredientExtractionResponse)
+        except (RuntimeError, ValueError) as exc:
+            error = exc
+
+    _log_detection_telemetry(settings, watch.elapsed_ms, raw_response, result, error)
+    if result is not None:
+        return result
+    return IngredientExtractionResponse(
+        ingredients=[],
+        uncertain_items=[
+            "The vision model could not parse the image. Confirm ingredients manually or retry with a clearer photo."
+        ],
+    )
+
+
+def _log_detection_telemetry(
+    settings: Any,
+    latency_ms: float,
+    raw_response: str,
+    result: IngredientExtractionResponse | None,
+    error: Exception | None,
+) -> None:
+    """Record one vision-detection data point so model quality can be tracked over time."""
+    confidences = [ingredient.confidence for ingredient in result.ingredients] if result else []
+    log_event(
+        "vision_detection",
+        {
+            "app_mode": settings.app_mode,
+            "model": settings.gemma_model_name if settings.app_mode == "local" else getattr(settings, "google_model_name", ""),
+            "latency_ms": latency_ms,
+            "parse_ok": result is not None,
+            "error_type": type(error).__name__ if error else None,
+            "error_message": str(error)[:200] if error else None,
+            "raw_response_chars": len(raw_response),
+            "ingredient_count": len(confidences),
+            "uncertain_count": len(result.uncertain_items) if result else 0,
+            "confidence_min": round(min(confidences), 3) if confidences else None,
+            "confidence_mean": round(sum(confidences) / len(confidences), 3) if confidences else None,
+            "confidence_max": round(max(confidences), 3) if confidences else None,
+            "low_confidence_count": sum(1 for value in confidences if value < 0.5),
+        },
+    )
 
 
 def _as_image_list(image: Any) -> list[Any]:

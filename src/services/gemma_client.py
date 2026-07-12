@@ -63,7 +63,7 @@ class GemmaClient:
         )
 
         try:
-            with urlopen(request, timeout=120) as response:
+            with urlopen(request, timeout=self.settings.ollama_timeout_seconds) as response:
                 data = json.loads(response.read().decode("utf-8"))
         except (TimeoutError, socket.timeout) as exc:
             raise RuntimeError(

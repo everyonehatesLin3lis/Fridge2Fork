@@ -143,6 +143,39 @@ Run the audit manually with:
 If the `hermes` CLI is not installed or configured, the script returns setup
 guidance plus a deterministic fallback audit so the app remains usable.
 
+## LLM Telemetry And Ops Report
+
+The app automatically collects lightweight LLM engineering telemetry while it
+runs (no extra setup, files are git-ignored):
+
+- `data/telemetry/vision_detection.jsonl`: one row per analyzed photo with
+  model latency, JSON parse success, ingredient count, and confidence
+  min/mean/max, so vision quality can be tracked over time.
+- `data/telemetry/rag_retrieval.jsonl`: one row per recipe reference search
+  with retrieval latency, result count, and top score, so RAG performance and
+  hit rate are measurable.
+
+Summarize everything that has been collected:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\llm_ops_report.py
+```
+
+Add `--check` to fail (exit code 1) when performance budgets are violated —
+this is what CI runs on every push.
+
+## CI
+
+`.github/workflows/ci.yml` runs on every push and pull request:
+
+1. the full pytest suite in mock mode, including RAG retrieval correctness and
+   a retrieval latency budget against a committed fixture index, and
+2. `scripts/llm_ops_report.py --check`, which enforces the RAG latency and
+   vision parse-success budgets over telemetry collected during the CI run.
+
+Telemetry produced during CI is uploaded as a build artifact so retrieval
+performance can be compared between commits.
+
 ## Tests
 
 ```powershell
