@@ -106,11 +106,7 @@ def _repair_recipe(recipe: RecipeCandidate, roles: dict[str, list[str]], reasons
         title = _clean_title(recipe.title, "Simple Plate")
         steps = _simple_plate_steps(recipe)
 
-    note = recipe.food_waste_note
-    if reasons:
-        note = note + " Feasibility check adjusted the dish form: " + " ".join(reasons)
-
-    return recipe.model_copy(update={"title": title, "steps": steps, "food_waste_note": note})
+    return recipe.model_copy(update={"title": title, "steps": steps})
 
 
 def _clean_title(title: str, replacement: str) -> str:

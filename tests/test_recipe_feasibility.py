@@ -27,7 +27,6 @@ def test_repairs_pie_skillet_without_binder_or_base() -> None:
             "Cut cottage cheese and yogurt into 1 cm pieces.",
             "Heat a pan on high heat and sear everything until crispy.",
         ],
-        food_waste_note="Uses dairy.",
     )
 
     result = validate_and_repair_recipe(recipe)
@@ -54,7 +53,6 @@ def test_valid_egg_skillet_passes() -> None:
             "Cook spinach over medium heat for 2 minutes.",
             "Add beaten eggs and cook over medium-low heat until set.",
         ],
-        food_waste_note="Uses spinach.",
     )
 
     result = validate_and_repair_recipe(recipe)

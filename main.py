@@ -171,7 +171,7 @@ def back_button(step: int) -> None:
 
 def render_step_ingredients() -> None:
     wizard_header(1, 4, "🍳 Sup! What are we cooking with today?",
-                  "Cooking is love made visible — let's start with what's already in your kitchen.")
+                  "Show us what's in your kitchen — we'll handle the meal-idea thinking.")
 
     col_photo, col_type, col_surprise = st.columns(3)
     with col_photo:
@@ -453,7 +453,7 @@ def render_results() -> None:
         st.toast("Dinner is figured out! 🎉", icon="🍳")
 
     st.markdown('<h1><span class="floaty">🍽️</span> Here\'s what you can make!</h1>', unsafe_allow_html=True)
-    st.caption("Cooked from what you already have — less waste, more love. ❤️")
+    st.caption("Decision made. Pick a recipe and get cooking. 💡")
 
     col_restart, col_retry, col_reroll = st.columns(3)
     with col_restart:
@@ -532,11 +532,12 @@ def render_results() -> None:
             if recipe.description:
                 st.markdown(f"*{recipe.description}*")
 
-            chip_cols = st.columns(4)
+            chip_cols = st.columns(5)
             chip_cols[0].metric("⏱️ Total", f"{recipe.time_minutes} min")
             chip_cols[1].metric("🔪 Prep", f"{recipe.prep_time_minutes} min")
             chip_cols[2].metric("🍳 Cook", f"{recipe.cook_time_minutes} min")
             chip_cols[3].metric("👥 Portions", recipe.portions)
+            chip_cols[4].metric("🔥 Calories / portion", f"≈ {recipe.nutrition.calories} kcal")
 
             st.markdown("**🛒 You already have:** " + ", ".join(recipe.ingredients_used))
             if recipe.missing_ingredients:
@@ -564,8 +565,6 @@ def render_results() -> None:
                 f"{recipe.nutrition.carbs_g}g carbs, {recipe.nutrition.fat_g}g fat per portion. "
                 "Estimates only, not medical advice."
             )
-            if recipe.food_waste_note:
-                st.caption(f"♻️ {recipe.food_waste_note}")
             for warning in recipe.safety_warnings:
                 st.warning(warning)
 
@@ -659,4 +658,4 @@ if st.session_state.latest_result is not None and step == 5:
     render_chat()
 
 st.divider()
-st.caption("🍳 FridgeAgent — less waste, more love.")
+st.caption("🍳 FridgeAgent — less thinking, more cooking.")

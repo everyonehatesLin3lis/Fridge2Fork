@@ -111,7 +111,8 @@ def render_recipe_cards(result: Any) -> None:
                 f"**Portions:** {recipe.portions} | "
                 f"**Prep:** {recipe.prep_time_minutes} min | "
                 f"**Cook:** {recipe.cook_time_minutes} min | "
-                f"**Total:** {recipe.time_minutes} min"
+                f"**Total:** {recipe.time_minutes} min | "
+                f"**Calories/portion:** ≈ {recipe.nutrition.calories} kcal"
             )
             st.write(f"**Goal fit:** {recipe.goal_fit}")
             st.write("**Ingredients used:** " + ", ".join(recipe.ingredients_used))
@@ -146,7 +147,6 @@ def render_recipe_cards(result: Any) -> None:
                 )
             st.caption(recipe.nutrition.goal_note)
             st.caption(recipe.nutrition.note)
-            st.info(recipe.food_waste_note)
             for warning in recipe.safety_warnings:
                 st.warning(warning)
 
@@ -172,7 +172,7 @@ def _average(values: list[float]) -> float:
 st.set_page_config(page_title="FridgeAgent", page_icon="F", layout="wide")
 
 st.title("FridgeAgent")
-st.caption("A multi-agent Gemma 4 assistant that turns fridge photos into practical recipes.")
+st.caption("Let four AI agents handle the meal-idea thinking so you can start cooking sooner.")
 
 with st.sidebar:
     st.subheader("Local status")

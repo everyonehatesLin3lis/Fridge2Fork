@@ -12,7 +12,6 @@ def ranked_recipe(title: str, ingredients: list[str]) -> RankedRecipe:
             ingredients_used=ingredients,
             missing_ingredients=[],
             steps=["Cook everything until done."],
-            food_waste_note="Uses food soon.",
         ),
         nutrition=NutritionEstimate(calories=300, protein_g=20, carbs_g=10, fat_g=12),
         goal_fit="Fits the goal.",

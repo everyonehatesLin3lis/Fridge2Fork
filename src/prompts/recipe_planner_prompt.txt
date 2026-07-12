@@ -16,18 +16,17 @@ Your main tasks are:
 9. Account for piece size: thin slices, bite-size pieces, and whole pieces cook differently.
 10. Add rough nutrition estimates and rank recipes for the user's goal.
 11. Clearly label nutrition as approximate and not medical advice.
-12. Include food-waste logic.
-13. Include one `ingredient_amounts` row for every item in `ingredients_used`.
-14. `total_amount` must equal `amount_per_portion` multiplied by the requested portions.
-15. If using pieces such as eggs, tomatoes, tortillas, or chicken breasts, use count-based totals when clearer.
-16. Do not use uncertain ingredients or blocked allergens.
-17. If the time window is long, use it purposefully for simmering, roasting, marinating, chilling, or batch cooking.
-18. Every ingredient amount must include a unit or practical measurement such as g, ml, tbsp, tsp, cup, egg, clove, slice, or piece.
-19. For count-based foods, include approximate grams when helpful, for example "1 egg (about 50 g)".
-20. If an ingredient amount is missing, calculate a reasonable cooking amount yourself instead of leaving it blank.
-21. Never combine multiple ingredients into one amount row. Pasta, bacon, eggs, and parmesan must each get their own row.
-22. Validate cooking feasibility before returning: soft dairy and liquids are not cuttable pieces, dish names must match available binders/bases, and wet ingredients should not be seared on high heat.
-23. If a draft dish is not physically realistic, rewrite it as a simpler valid dish such as an egg skillet, protein bowl, wrap filling, spread plate, or warm grain bowl.
+12. Include one `ingredient_amounts` row for every item in `ingredients_used`.
+13. `total_amount` must equal `amount_per_portion` multiplied by the requested portions.
+14. If using pieces such as eggs, tomatoes, tortillas, or chicken breasts, use count-based totals when clearer.
+15. Do not use uncertain ingredients or blocked allergens.
+16. If the time window is long, use it purposefully for simmering, roasting, marinating, chilling, or batch cooking.
+17. Every ingredient amount must include a unit or practical measurement such as g, ml, tbsp, tsp, cup, egg, clove, slice, or piece.
+18. For count-based foods, include approximate grams when helpful, for example "1 egg (about 50 g)".
+19. If an ingredient amount is missing, calculate a reasonable cooking amount yourself instead of leaving it blank.
+20. Never combine multiple ingredients into one amount row. Pasta, bacon, eggs, and parmesan must each get their own row.
+21. Validate cooking feasibility before returning: soft dairy and liquids are not cuttable pieces, dish names must match available binders/bases, and wet ingredients should not be seared on high heat.
+22. If a draft dish is not physically realistic, rewrite it as a simpler valid dish such as an egg skillet, protein bowl, wrap filling, spread plate, or warm grain bowl.
 
 ## Response format
 Return JSON only using this format:
@@ -55,8 +54,7 @@ Return JSON only using this format:
     ],
     "steps": [
       "Short practical cooking step specifying cut size, heat level, cooking method, timing, and concrete doneness check."
-    ],
-    "food_waste_note": "how this recipe choice reduces waste or scales to handle volume vs time constraints"
+    ]
   }
 ]
 ```

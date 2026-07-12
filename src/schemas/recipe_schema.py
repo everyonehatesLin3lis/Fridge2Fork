@@ -33,7 +33,6 @@ class RecipeCandidate(BaseModel):
     ingredient_amounts: list[IngredientAmount] = Field(default_factory=list)
     missing_ingredients: list[str] = Field(default_factory=list)
     steps: list[str] = Field(min_length=1)
-    food_waste_note: str
 
 
 class RankedRecipe(BaseModel):
@@ -61,5 +60,4 @@ class FinalRecipe(BaseModel):
     steps: list[str]
     nutrition: NutritionEstimate
     goal_fit: str
-    food_waste_note: str
     safety_warnings: list[str] = Field(default_factory=list)

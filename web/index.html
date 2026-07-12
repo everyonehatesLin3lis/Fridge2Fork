@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FridgeAgent — cook what you love, waste nothing</title>
+<title>FridgeAgent — less thinking, more cooking</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -205,7 +205,7 @@ input[type=range]{width:100%;accent-color:var(--orange);height:34px}
   justify-content:center;font-weight:800;font-size:.8rem;font-family:'Sora';color:var(--orange-dark);
 }
 .nutri{font-size:.82rem;color:var(--ink-soft)}
-.waste{font-size:.85rem;background:rgba(46,155,107,.1);color:#1D6B49;border-radius:var(--r-sm);padding:10px 14px}
+.meta .kcal{background:rgba(255,122,69,.14);color:var(--orange-dark)}
 .warn{font-size:.85rem;background:rgba(255,201,67,.18);border-radius:var(--r-sm);padding:10px 14px}
 .empty-state{background:var(--white);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:44px;text-align:center;margin-top:34px}
 .empty-state .big{font-size:3rem}
@@ -268,13 +268,13 @@ input[type=range]{width:100%;accent-color:var(--orange);height:34px}
   <span class="hero-emoji" data-depth="2.5" style="bottom:20%;right:18%">🥚</span>
   <span class="hero-emoji" data-depth="1.8" style="top:52%;left:6%">🍋</span>
   <span class="hero-emoji" data-depth="2.2" style="top:58%;right:7%">🌶️</span>
-  <h1>Cook what you <span class="hl">love</span>.<br>Waste nothing.</h1>
-  <p>Snap your fridge, answer three tasty questions, and let four little AI chefs turn what you already have into dinner you'll actually want.</p>
+  <h1>Less thinking.<br><span class="hl">More cooking.</span></h1>
+  <p>Snap your fridge and answer three quick questions. FridgeAgent handles the meal-idea thinking, saving you time and giving you practical recipes in minutes.</p>
   <button class="cta" id="cta" onclick="goStep(1)">Let's cook 🍽️<span class="shine"></span></button>
   <div class="hero-stats">
     <div class="stat"><span>📷</span> Snap your fridge</div>
     <div class="stat"><span>🤖</span> 4 AI chef agents</div>
-    <div class="stat"><span>♻️</span> Zero waste vibes</div>
+    <div class="stat"><span>💡</span> Save decision time</div>
   </div>
 </section>
 
@@ -282,7 +282,7 @@ input[type=range]{width:100%;accent-color:var(--orange);height:34px}
 <section class="screen" id="step1">
   <div class="steps-nav"></div>
   <h2 class="step-title"><span class="step-emoji">🍳</span> What are we cooking with?</h2>
-  <p class="step-sub">Cooking is love made visible — start with what's already in your kitchen.</p>
+  <p class="step-sub">Show us what's in your kitchen — we'll handle the meal-idea thinking.</p>
   <div class="cards">
     <button class="opt" data-mode="photo">
       <span class="big">📷</span><h3>Snap my fridge</h3><p>Up to 5 photos — our vision chef reads the shelves</p>
@@ -382,7 +382,7 @@ input[type=range]{width:100%;accent-color:var(--orange);height:34px}
   <div class="results-head">
     <div>
       <h2>🍽️ Here's what you can make!</h2>
-      <p>Cooked from what you already have — less waste, more love. ❤️</p>
+      <p>Decision made. Pick a recipe and get cooking. 💡</p>
     </div>
     <div class="results-actions">
       <button class="pill-btn" onclick="restart()">🔄 Start over</button>
@@ -429,7 +429,7 @@ const SUGGESTIONS = ["chicken","eggs","rice","pasta","onion","tomatoes","cheese"
 const SURPRISE = ["eggs","pasta","rice","onion","tomatoes","cheese"];
 const LOAD_MSGS = [
   "Sniffing out what's fresh… 👃","Consulting 25,000 recipes… 📚","The vision chef is squinting at your shelves… 🔍",
-  "Arguing about seasoning… 🧂","Doing the portion math… ✖️","Checking nothing goes to waste… ♻️",
+  "Arguing about seasoning… 🧂","Doing the portion math… ✖️","Saving you the what-to-cook headache… 💡",
   "Taste-testing (in theory)… 😋","Plating up your ideas… 🍽️"
 ];
 const state = {
@@ -695,13 +695,13 @@ function renderResults(data){
       <div class="meta">
         <span>⏱️ ${fmtTime(r.time_minutes)}</span><span>🔪 ${r.prep_time_minutes} min</span>
         <span>🍳 ${r.cook_time_minutes} min</span><span>👥 ${r.portions}</span>
+        <span class="kcal">🔥 ≈ ${n.calories??"?"} kcal / portion</span>
       </div>
       <div class="body">
         <div class="haveneed"><b>🛒 You have:</b> ${esc(have)}${need?`<br><b>🧂 You might need:</b> ${esc(need)}`:""}</div>
         <button class="show-steps" onclick="toggleSteps(this)">👨‍🍳 Show me how</button>
         <ul class="steps-list">${steps}</ul>
         <div class="nutri">≈ ${n.calories??"?"} kcal · ${n.protein_g??"?"}g protein · ${n.carbs_g??"?"}g carbs · ${n.fat_g??"?"}g fat per portion — estimates, not medical advice</div>
-        ${r.food_waste_note?`<div class="waste">♻️ ${esc(r.food_waste_note)}</div>`:""}
         ${warns}
       </div>
     </article>`;

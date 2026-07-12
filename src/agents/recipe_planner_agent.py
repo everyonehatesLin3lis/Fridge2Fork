@@ -93,8 +93,7 @@ Return only a JSON array. Each item must have exactly:
     }}
   ],
   "missing_ingredients": ["small pantry item if needed"],
-  "steps": ["short practical step"],
-  "food_waste_note": "how this reduces waste"
+  "steps": ["short practical step"]
 }}
 
 Rules:
@@ -104,7 +103,7 @@ Rules:
 - Respect meal_type. Breakfast should feel like breakfast, dinner like dinner, snack like snack, and meal_prep should scale better.
 - Keep nutrition and health claims out of this step.
 - Keep every recipe under {preferences.max_cooking_time_minutes} minutes.
-- If servings and time conflict, do not pretend it is easy. Choose recipes that scale, use batch-friendly steps, and mention the compromise in food_waste_note.
+- If servings and time conflict, do not pretend it is easy. Choose recipes that scale and use batch-friendly steps.
 - If an ingredient variant is ambiguous, avoid unsafe assumptions and keep the recipe compatible with the user's allergies where possible.
 - Calculate ingredient amounts per portion and total amount for {preferences.meals_needed} portions.
 - Base product quantities on the user's requested portion count. If the user asks for {preferences.meals_needed} portions, total_amount must equal amount_per_portion multiplied by {preferences.meals_needed}.
@@ -200,7 +199,6 @@ def _fallback_recipes(available: list[str], preferences: UserPreferences, recipe
                 _main_cooking_step(primary, preferences),
                 _finish_step(primary, preferences, meal_label),
             ],
-            food_waste_note=f"Uses {', '.join(primary[:2])} before they sit in the fridge too long.",
         ),
         RecipeCandidate(
             title=f"{meal_label} {primary[0].title()} Bowl",
@@ -218,7 +216,6 @@ def _fallback_recipes(available: list[str], preferences: UserPreferences, recipe
                 _bowl_cooking_step(primary[:3], preferences),
                 f"Divide into {preferences.meals_needed} {meal_label.lower()} portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper.",
             ],
-            food_waste_note="Turns small leftover portions into a fast meal instead of letting them expire.",
         ),
     ]
 

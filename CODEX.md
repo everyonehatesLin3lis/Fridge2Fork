@@ -11,7 +11,7 @@ not counted as a specialist agent. Older seven-agent examples in this planning
 document are retained as historical scaffolding, but the active project
 architecture is the 4-agent workflow.
 
-The app helps users decide what to cook from food they already have. A user uploads a fridge or food photo, the system detects visible ingredients, asks for cooking goals and constraints, then generates practical recipes that minimize missing ingredients and reduce food waste.
+The app saves users time and mental effort when deciding what to cook. A user uploads a fridge or food photo, the system detects visible ingredients, asks for cooking goals and constraints, then generates practical recipes with minimal missing ingredients.
 
 ## Challenge Goal
 
@@ -297,7 +297,7 @@ Responsibilities:
 - Minimize missing ingredients
 - Respect time limit
 - Prefer realistic home cooking
-- Include food-waste logic when possible
+- Prioritize quick decision support and realistic cooking plans
 
 ### 5. Nutrition Goal Agent
 
@@ -349,7 +349,7 @@ Output:
 Responsibilities:
 
 - Write clean recipe cards
-- Include title, time, ingredients used, missing ingredients, steps, nutrition estimate, goal fit, and food-waste note
+- Include title, time, ingredients used, missing ingredients, steps, nutrition estimate per portion, and goal fit
 - Keep the result practical and readable
 
 ## Orchestrator Requirements

@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-05-18T18:55:31",
+  "created_at": "2026-07-12T22:46:31",
   "app_mode": "mock",
   "recipe_rag_ready": true,
   "ingredients": [
@@ -41,16 +41,14 @@
         ]
       },
       "metrics": {
-        "hermes_stage_count": 5,
+        "hermes_stage_count": 3,
         "recipe_rag_ready": true,
         "hermes_steps": [
-          "vision",
           "constraints",
           "recipe_planner",
-          "recipe_review",
-          "final_writer"
+          "final_recipe"
         ],
-        "monitorable_trace_entries": 5,
+        "monitorable_trace_entries": 3,
         "final_recipe_count": 2,
         "average_cooking_detail_score": 0.8,
         "portion_amount_coverage": 1.0,
@@ -63,165 +61,15 @@
       },
       "events": [
         {
-          "time": "18:55:31",
-          "agent": "Vision Ingredient Agent",
-          "message": "Detecting visible ingredients from the photo.",
+          "time": "22:46:31",
+          "agent": "Ingredient Input",
+          "message": "No image uploaded, so Vision Agent was skipped and typed ingredients were used directly.",
           "details": {
-            "input": "no image; using demo fallback"
-          }
-        },
-        {
-          "time": "18:55:31",
-          "agent": "Vision Ingredient Agent",
-          "message": "Detected 5 ingredient candidates.",
-          "details": {
-            "output": {
-              "ingredients": [
-                {
-                  "name": "eggs",
-                  "category": "protein",
-                  "quantity": "6",
-                  "confidence": 0.92,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "spinach",
-                  "category": "vegetable",
-                  "quantity": "1 bag",
-                  "confidence": 0.78,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "Greek yogurt",
-                  "category": "dairy",
-                  "quantity": "1 tub",
-                  "confidence": 0.68,
-                  "use_soon": true,
-                  "possible_variants": [
-                    "dairy Greek yogurt",
-                    "coconut yogurt"
-                  ],
-                  "uncertainty_note": "The tub style is visible, but the exact base may affect dairy allergies."
-                },
-                {
-                  "name": "cheddar cheese",
-                  "category": "dairy",
-                  "quantity": "small block",
-                  "confidence": 0.74,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "tomatoes",
-                  "category": "vegetable",
-                  "quantity": "3",
-                  "confidence": 0.84,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                }
-              ],
-              "uncertain_items": [
-                "white container on top shelf"
-              ]
-            },
-            "reason_summary": "Low confidence or ambiguous package types are surfaced as uncertainty instead of treated as facts."
-          }
-        },
-        {
-          "time": "18:55:31",
-          "agent": "Ingredient Verification Agent",
-          "message": "Normalizing names and checking uncertainty.",
-          "details": {
-            "input": {
-              "ingredients": [
-                {
-                  "name": "eggs",
-                  "category": "protein",
-                  "quantity": "6",
-                  "confidence": 0.92,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "spinach",
-                  "category": "vegetable",
-                  "quantity": "1 bag",
-                  "confidence": 0.78,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "Greek yogurt",
-                  "category": "dairy",
-                  "quantity": "1 tub",
-                  "confidence": 0.68,
-                  "use_soon": true,
-                  "possible_variants": [
-                    "dairy Greek yogurt",
-                    "coconut yogurt"
-                  ],
-                  "uncertainty_note": "The tub style is visible, but the exact base may affect dairy allergies."
-                },
-                {
-                  "name": "cheddar cheese",
-                  "category": "dairy",
-                  "quantity": "small block",
-                  "confidence": 0.74,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "tomatoes",
-                  "category": "vegetable",
-                  "quantity": "3",
-                  "confidence": 0.84,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                }
-              ],
-              "uncertain_items": [
-                "white container on top shelf"
-              ]
-            }
-          }
-        },
-        {
-          "time": "18:55:31",
-          "agent": "User Confirmation",
-          "message": "Using typed confirmed ingredients instead of photo detections.",
-          "details": {
-            "confirmed_ingredients": [
-              "chicken breast",
-              "eggs",
-              "cooked rice",
-              "spinach",
-              "tomatoes",
-              "cheddar cheese",
-              "Greek yogurt",
-              "bell pepper"
-            ]
-          }
-        },
-        {
-          "time": "18:55:31",
-          "agent": "Ingredient Verification Agent",
-          "message": "Confirmed ingredients: chicken breast, eggs, cooked rice, spinach, tomatoes, cheddar cheese, greek yogurt, bell pepper",
-          "details": {
-            "output": {
+            "verified_output": {
               "ingredients": [
                 {
                   "name": "chicken breast",
-                  "category": "confirmed",
+                  "category": "protein",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -230,7 +78,7 @@
                 },
                 {
                   "name": "eggs",
-                  "category": "confirmed",
+                  "category": "protein",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -239,7 +87,7 @@
                 },
                 {
                   "name": "cooked rice",
-                  "category": "confirmed",
+                  "category": "grain",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -248,7 +96,7 @@
                 },
                 {
                   "name": "spinach",
-                  "category": "confirmed",
+                  "category": "vegetable",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -257,7 +105,7 @@
                 },
                 {
                   "name": "tomatoes",
-                  "category": "confirmed",
+                  "category": "vegetable",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -266,7 +114,7 @@
                 },
                 {
                   "name": "cheddar cheese",
-                  "category": "confirmed",
+                  "category": "dairy",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -275,7 +123,7 @@
                 },
                 {
                   "name": "greek yogurt",
-                  "category": "confirmed",
+                  "category": "dairy",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -284,7 +132,7 @@
                 },
                 {
                   "name": "bell pepper",
-                  "category": "confirmed",
+                  "category": "vegetable",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -292,18 +140,15 @@
                   "uncertainty_note": null
                 }
               ],
-              "clarification_questions": [
-                "I detected white container on top shelf. What is it?"
-              ]
+              "clarification_questions": []
             },
-            "low_confidence_items_requiring_confirmation": [],
-            "reason_summary": "The recipe planner only receives this verified list."
+            "reason_summary": "Skipping vision avoids unnecessary model calls when the user already typed confirmed ingredients."
           }
         },
         {
-          "time": "18:55:31",
-          "agent": "User Preference Agent",
-          "message": "Validating cooking goals, allergies, time, meal type, servings, and tools.",
+          "time": "22:46:31",
+          "agent": "Constraints Agent",
+          "message": "Validating cooking goals, allergies, portions, time, and tools.",
           "details": {
             "input": {
               "goal": "high_protein",
@@ -333,8 +178,8 @@
           }
         },
         {
-          "time": "18:55:31",
-          "agent": "User Preference Agent",
+          "time": "22:46:31",
+          "agent": "Constraints Agent",
           "message": "Goal is high_protein.",
           "details": {
             "output": {
@@ -345,6 +190,7 @@
               "meals_needed": 2,
               "meal_type": "dinner",
               "constraint_resolution": "make_best_effort",
+              "gender": "none",
               "height_cm": 180,
               "weight_kg": 82,
               "available_tools": [
@@ -353,20 +199,20 @@
               ]
             },
             "constraint_warnings": [],
-            "reason_summary": "Serving count and cooking time are checked before planning so impossible requests become visible."
+            "reason_summary": "Serving count, cooking time, allergies, and available tools are checked before planning."
           }
         },
         {
-          "time": "18:55:31",
+          "time": "22:46:33",
           "agent": "Recipe Planner Agent",
-          "message": "Generating recipe candidates from confirmed ingredients.",
+          "message": "Generating recipe candidates with RAG references, portion math, cooking details, and rough nutrition.",
           "details": {
             "input": {
               "ingredients": {
                 "ingredients": [
                   {
                     "name": "chicken breast",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -375,7 +221,7 @@
                   },
                   {
                     "name": "eggs",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -384,7 +230,7 @@
                   },
                   {
                     "name": "cooked rice",
-                    "category": "confirmed",
+                    "category": "grain",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -393,7 +239,7 @@
                   },
                   {
                     "name": "spinach",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -402,7 +248,7 @@
                   },
                   {
                     "name": "tomatoes",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -411,7 +257,7 @@
                   },
                   {
                     "name": "cheddar cheese",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -420,7 +266,7 @@
                   },
                   {
                     "name": "greek yogurt",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -429,7 +275,7 @@
                   },
                   {
                     "name": "bell pepper",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -437,9 +283,7 @@
                     "uncertainty_note": null
                   }
                 ],
-                "clarification_questions": [
-                  "I detected white container on top shelf. What is it?"
-                ]
+                "clarification_questions": []
               },
               "preferences": {
                 "goal": "high_protein",
@@ -449,6 +293,7 @@
                 "meals_needed": 2,
                 "meal_type": "dinner",
                 "constraint_resolution": "make_best_effort",
+                "gender": "none",
                 "height_cm": 180,
                 "weight_kg": 82,
                 "available_tools": [
@@ -456,24 +301,79 @@
                   "oven"
                 ]
               },
-              "constraint_warnings": []
+              "constraint_warnings": [],
+              "retrieved_recipe_references": [
+                {
+                  "title": "Stuffed Bell Peppers",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "4 large bell peppers (any color)",
+                    "1 tsp. olive oil",
+                    "2 medium tomatoes, chopped",
+                    "1 medium squash, diced (yellow)",
+                    "1 medium zucchini, diced",
+                    "1/2 c. onion, diced",
+                    "2 medium cloves garlic, minced",
+                    "2 c. cooked brown rice"
+                  ],
+                  "directions": [
+                    "Preheat oven to 375\u00b0. Cut peppers in half lengthwise. Remove stems, rubs and seeds. Heat oil in a large skillet over medium heat, swirling to cover bottom. Saut crookneck squash, zucchini, onion and garlic until zucchini is tender-crisp (about 4 minutes). Don't overcook. In a medium bowl, combine rice and cheese. Gently stir into skillet. Stuff pepper halves with vegetable mixture. Place in a 9-inch casserole dish. Carefully pour tomato sauce around peppers. Bake, uncovered, for 30 minutes. Serves 8."
+                  ]
+                },
+                {
+                  "title": "Spinach-Rice Casserole",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "3/4 c. brown rice",
+                    "2 c. vegetable broth",
+                    "1/2 c. grated Cheddar cheese",
+                    "2 Tbsp. minced fresh parsley",
+                    "1 lb. fresh spinach, washed and chopped",
+                    "1/4 tsp. garlic powder",
+                    "1/4 tsp. black pepper",
+                    "2 eggs, beaten"
+                  ],
+                  "directions": [
+                    "Cook for 40 minutes the brown rice and vegetable broth. Prepare the Cheddar cheese, parsley and fresh spinach while rice is cooking.",
+                    "After rice has cooked 30 minutes, preheat oven to 350\u00b0. Mix cooked rice with the Cheddar cheese mixture adding garlic powder, black pepper and eggs.",
+                    "Spoon mixture into greased casserole dish."
+                  ]
+                },
+                {
+                  "title": "Tortilla Soup",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "1 Tbsp. vegetable oil",
+                    "12 corn tortillas, cut in strips",
+                    "2 Tbsp. chili powder",
+                    "1/2 tsp. cayenne pepper",
+                    "1 Tbsp. paprika",
+                    "1 1/2 Tbsp. cumin",
+                    "1 Tbsp. garlic, chopped",
+                    "2 bay leaves"
+                  ],
+                  "directions": [
+                    "Heat vegetable oil in a large pot set over medium-high heat. Add the tortillas, chili powder, cayenne pepper, paprika, cumin, garlic and bay leaves and saute for 10 minutes.",
+                    "Add onion, red bell pepper and cilantro; cook 5 minutes.",
+                    "Add tomatoes and cook 5 minutes."
+                  ]
+                }
+              ]
             }
           }
         },
         {
-          "time": "18:55:32",
+          "time": "22:46:34",
           "agent": "Recipe Planner Agent",
-          "message": "Created 2 recipe candidates.",
-          "details": {}
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Recipe Planner Agent",
-          "message": "Recipe planning output is ready.",
+          "message": "Created 2 candidates and ranked 2 recipes.",
           "details": {
-            "output": [
+            "recipe_candidates": [
               {
                 "title": "Dinner Stuffed Bell Peppers Skillet",
+                "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -493,8 +393,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "2 eggs (about 100 g)",
                     "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -516,16 +416,16 @@
                   "pepper"
                 ],
                 "steps": [
-                  "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+                  "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
                   "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                   "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                   "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                   "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-                ],
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                ]
               },
               {
                 "title": "Dinner Chicken Breast Bowl",
+                "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -544,8 +444,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "2 eggs (about 100 g)",
                     "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -560,130 +460,18 @@
                   "black pepper"
                 ],
                 "steps": [
-                  "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+                  "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
                   "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                   "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                   "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                ],
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                ]
               }
             ],
-            "reason_summary": "Recipes are expected to respect meal type, time, portions, allergies, and ambiguous ingredient variants."
-          }
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Nutrition Goal Agent",
-          "message": "Ranking recipes with rough nutrition estimates.",
-          "details": {
-            "input": [
-              {
-                "title": "Dinner Stuffed Bell Peppers Skillet",
-                "time_minutes": 30,
-                "prep_time_minutes": 10,
-                "cook_time_minutes": 20,
-                "portions": 2,
-                "ingredients_used": [
-                  "chicken breast",
-                  "eggs",
-                  "cooked rice",
-                  "spinach"
-                ],
-                "ingredient_amounts": [
-                  {
-                    "name": "chicken breast",
-                    "amount_per_portion": "120 g",
-                    "total_amount": "240 g",
-                    "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
-                    "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "cooked rice",
-                    "amount_per_portion": "75 g",
-                    "total_amount": "150 g",
-                    "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "spinach",
-                    "amount_per_portion": "80 g",
-                    "total_amount": "160 g",
-                    "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                  }
-                ],
-                "missing_ingredients": [
-                  "olive oil",
-                  "salt",
-                  "pepper"
-                ],
-                "steps": [
-                  "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
-                  "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
-                  "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
-                  "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
-                  "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-                ],
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
-              },
-              {
-                "title": "Dinner Chicken Breast Bowl",
-                "time_minutes": 30,
-                "prep_time_minutes": 10,
-                "cook_time_minutes": 20,
-                "portions": 2,
-                "ingredients_used": [
-                  "chicken breast",
-                  "eggs",
-                  "cooked rice"
-                ],
-                "ingredient_amounts": [
-                  {
-                    "name": "chicken breast",
-                    "amount_per_portion": "120 g",
-                    "total_amount": "240 g",
-                    "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
-                    "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "cooked rice",
-                    "amount_per_portion": "75 g",
-                    "total_amount": "150 g",
-                    "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                  }
-                ],
-                "missing_ingredients": [
-                  "lemon juice or vinegar",
-                  "black pepper"
-                ],
-                "steps": [
-                  "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
-                  "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
-                  "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
-                  "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                ],
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
-              }
-            ]
-          }
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Nutrition Goal Agent",
-          "message": "Ranked 2 recipes.",
-          "details": {
-            "output": [
+            "ranked_recipes": [
               {
                 "candidate": {
                   "title": "Dinner Stuffed Bell Peppers Skillet",
+                  "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
                   "time_minutes": 30,
                   "prep_time_minutes": 10,
                   "cook_time_minutes": 20,
@@ -703,8 +491,8 @@
                     },
                     {
                       "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "2 eggs",
+                      "amount_per_portion": "1 egg (about 50 g)",
+                      "total_amount": "2 eggs (about 100 g)",
                       "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                     },
                     {
@@ -726,13 +514,12 @@
                     "pepper"
                   ],
                   "steps": [
-                    "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+                    "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
                     "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                     "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                     "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                     "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-                  ],
-                  "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                  ]
                 },
                 "nutrition": {
                   "calories": 542,
@@ -751,6 +538,7 @@
               {
                 "candidate": {
                   "title": "Dinner Chicken Breast Bowl",
+                  "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                   "time_minutes": 30,
                   "prep_time_minutes": 10,
                   "cook_time_minutes": 20,
@@ -769,8 +557,8 @@
                     },
                     {
                       "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "2 eggs",
+                      "amount_per_portion": "1 egg (about 50 g)",
+                      "total_amount": "2 eggs (about 100 g)",
                       "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                     },
                     {
@@ -785,12 +573,11 @@
                     "black pepper"
                   ],
                   "steps": [
-                    "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+                    "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
                     "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                     "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                     "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                  ],
-                  "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                  ]
                 },
                 "nutrition": {
                   "calories": 512,
@@ -807,27 +594,28 @@
                 "rank_score": 46.0
               }
             ],
-            "reason_summary": "Nutrition values are rough estimates only, not medical advice."
+            "reason_summary": "This single agent handles RAG-grounded planning, portion calculations, cooking specificity, and rough nutrition ranking."
           }
         },
         {
-          "time": "18:55:32",
-          "agent": "Allergy Safety Agent",
-          "message": "Filtering recipes against declared allergies.",
+          "time": "22:46:34",
+          "agent": "Final Recipe Agent",
+          "message": "Filtering allergens and writing final recipe cards.",
           "details": {
             "input_allergies": []
           }
         },
         {
-          "time": "18:55:32",
-          "agent": "Allergy Safety Agent",
-          "message": "2 recipes passed safety filtering.",
+          "time": "22:46:34",
+          "agent": "Final Recipe Agent",
+          "message": "Prepared 2 final recipe cards.",
           "details": {
-            "output": [
+            "safe_recipes": [
               {
                 "ranked_recipe": {
                   "candidate": {
                     "title": "Dinner Stuffed Bell Peppers Skillet",
+                    "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
                     "time_minutes": 30,
                     "prep_time_minutes": 10,
                     "cook_time_minutes": 20,
@@ -847,8 +635,8 @@
                       },
                       {
                         "name": "eggs",
-                        "amount_per_portion": "1 egg",
-                        "total_amount": "2 eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "2 eggs (about 100 g)",
                         "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                       },
                       {
@@ -870,13 +658,12 @@
                       "pepper"
                     ],
                     "steps": [
-                      "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+                      "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
                       "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                       "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                       "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                       "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-                    ],
-                    "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                    ]
                   },
                   "nutrition": {
                     "calories": 542,
@@ -898,6 +685,7 @@
                 "ranked_recipe": {
                   "candidate": {
                     "title": "Dinner Chicken Breast Bowl",
+                    "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                     "time_minutes": 30,
                     "prep_time_minutes": 10,
                     "cook_time_minutes": 20,
@@ -916,8 +704,8 @@
                       },
                       {
                         "name": "eggs",
-                        "amount_per_portion": "1 egg",
-                        "total_amount": "2 eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "2 eggs (about 100 g)",
                         "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                       },
                       {
@@ -932,12 +720,11 @@
                       "black pepper"
                     ],
                     "steps": [
-                      "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+                      "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
                       "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                       "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                       "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                    ],
-                    "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                    ]
                   },
                   "nutrition": {
                     "calories": 512,
@@ -956,23 +743,10 @@
                 "safety_warnings": []
               }
             ],
-            "reason_summary": "Recipes with direct allergen conflicts are removed; uncertain hidden allergens become warnings."
-          }
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Final Recipe Writer Agent",
-          "message": "Writing final recipe cards.",
-          "details": {}
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Final Recipe Writer Agent",
-          "message": "Prepared 2 final recipe cards.",
-          "details": {
-            "output": [
+            "final_recipes": [
               {
                 "title": "Dinner Stuffed Bell Peppers Skillet",
+                "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -992,8 +766,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "2 eggs (about 100 g)",
                     "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -1015,7 +789,7 @@
                   "pepper"
                 ],
                 "steps": [
-                  "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+                  "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
                   "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                   "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                   "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
@@ -1033,11 +807,11 @@
                   "note": "Approximate estimate only, not medical advice."
                 },
                 "goal_fit": "Good fit for high protein using rough nutrition estimates.",
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long.",
                 "safety_warnings": []
               },
               {
                 "title": "Dinner Chicken Breast Bowl",
+                "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -1056,8 +830,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "2 eggs (about 100 g)",
                     "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -1072,7 +846,7 @@
                   "black pepper"
                 ],
                 "steps": [
-                  "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+                  "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
                   "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                   "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                   "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
@@ -1089,74 +863,23 @@
                   "note": "Approximate estimate only, not medical advice."
                 },
                 "goal_fit": "Good fit for high protein using rough nutrition estimates.",
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire.",
                 "safety_warnings": []
               }
-            ]
+            ],
+            "reason_summary": "This single agent removes direct allergen conflicts, adds safety warnings, and formats final user-facing recipe cards."
           }
         }
       ],
       "result": {
         "detected_ingredients": {
-          "ingredients": [
-            {
-              "name": "eggs",
-              "category": "protein",
-              "quantity": "6",
-              "confidence": 0.92,
-              "use_soon": false,
-              "possible_variants": [],
-              "uncertainty_note": null
-            },
-            {
-              "name": "spinach",
-              "category": "vegetable",
-              "quantity": "1 bag",
-              "confidence": 0.78,
-              "use_soon": true,
-              "possible_variants": [],
-              "uncertainty_note": null
-            },
-            {
-              "name": "Greek yogurt",
-              "category": "dairy",
-              "quantity": "1 tub",
-              "confidence": 0.68,
-              "use_soon": true,
-              "possible_variants": [
-                "dairy Greek yogurt",
-                "coconut yogurt"
-              ],
-              "uncertainty_note": "The tub style is visible, but the exact base may affect dairy allergies."
-            },
-            {
-              "name": "cheddar cheese",
-              "category": "dairy",
-              "quantity": "small block",
-              "confidence": 0.74,
-              "use_soon": false,
-              "possible_variants": [],
-              "uncertainty_note": null
-            },
-            {
-              "name": "tomatoes",
-              "category": "vegetable",
-              "quantity": "3",
-              "confidence": 0.84,
-              "use_soon": true,
-              "possible_variants": [],
-              "uncertainty_note": null
-            }
-          ],
-          "uncertain_items": [
-            "white container on top shelf"
-          ]
+          "ingredients": [],
+          "uncertain_items": []
         },
         "verified_ingredients": {
           "ingredients": [
             {
               "name": "chicken breast",
-              "category": "confirmed",
+              "category": "protein",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1165,7 +888,7 @@
             },
             {
               "name": "eggs",
-              "category": "confirmed",
+              "category": "protein",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1174,7 +897,7 @@
             },
             {
               "name": "cooked rice",
-              "category": "confirmed",
+              "category": "grain",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1183,7 +906,7 @@
             },
             {
               "name": "spinach",
-              "category": "confirmed",
+              "category": "vegetable",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1192,7 +915,7 @@
             },
             {
               "name": "tomatoes",
-              "category": "confirmed",
+              "category": "vegetable",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1201,7 +924,7 @@
             },
             {
               "name": "cheddar cheese",
-              "category": "confirmed",
+              "category": "dairy",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1210,7 +933,7 @@
             },
             {
               "name": "greek yogurt",
-              "category": "confirmed",
+              "category": "dairy",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1219,7 +942,7 @@
             },
             {
               "name": "bell pepper",
-              "category": "confirmed",
+              "category": "vegetable",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -1227,9 +950,7 @@
               "uncertainty_note": null
             }
           ],
-          "clarification_questions": [
-            "I detected white container on top shelf. What is it?"
-          ]
+          "clarification_questions": []
         },
         "preferences": {
           "goal": "high_protein",
@@ -1239,6 +960,7 @@
           "meals_needed": 2,
           "meal_type": "dinner",
           "constraint_resolution": "make_best_effort",
+          "gender": "none",
           "height_cm": 180,
           "weight_kg": 82,
           "available_tools": [
@@ -1249,6 +971,7 @@
         "recipe_candidates": [
           {
             "title": "Dinner Stuffed Bell Peppers Skillet",
+            "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
             "time_minutes": 30,
             "prep_time_minutes": 10,
             "cook_time_minutes": 20,
@@ -1268,8 +991,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "2 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "2 eggs (about 100 g)",
                 "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -1291,16 +1014,16 @@
               "pepper"
             ],
             "steps": [
-              "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+              "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
               "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
               "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
               "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
               "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-            ],
-            "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+            ]
           },
           {
             "title": "Dinner Chicken Breast Bowl",
+            "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
             "time_minutes": 30,
             "prep_time_minutes": 10,
             "cook_time_minutes": 20,
@@ -1319,8 +1042,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "2 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "2 eggs (about 100 g)",
                 "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -1335,18 +1058,18 @@
               "black pepper"
             ],
             "steps": [
-              "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+              "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
               "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
               "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
               "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-            ],
-            "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+            ]
           }
         ],
         "ranked_recipes": [
           {
             "candidate": {
               "title": "Dinner Stuffed Bell Peppers Skillet",
+              "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
               "time_minutes": 30,
               "prep_time_minutes": 10,
               "cook_time_minutes": 20,
@@ -1366,8 +1089,8 @@
                 },
                 {
                   "name": "eggs",
-                  "amount_per_portion": "1 egg",
-                  "total_amount": "2 eggs",
+                  "amount_per_portion": "1 egg (about 50 g)",
+                  "total_amount": "2 eggs (about 100 g)",
                   "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                 },
                 {
@@ -1389,13 +1112,12 @@
                 "pepper"
               ],
               "steps": [
-                "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+                "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
                 "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                 "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                 "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                 "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-              ],
-              "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+              ]
             },
             "nutrition": {
               "calories": 542,
@@ -1414,6 +1136,7 @@
           {
             "candidate": {
               "title": "Dinner Chicken Breast Bowl",
+              "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
               "time_minutes": 30,
               "prep_time_minutes": 10,
               "cook_time_minutes": 20,
@@ -1432,8 +1155,8 @@
                 },
                 {
                   "name": "eggs",
-                  "amount_per_portion": "1 egg",
-                  "total_amount": "2 eggs",
+                  "amount_per_portion": "1 egg (about 50 g)",
+                  "total_amount": "2 eggs (about 100 g)",
                   "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                 },
                 {
@@ -1448,12 +1171,11 @@
                 "black pepper"
               ],
               "steps": [
-                "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+                "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
                 "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                 "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                 "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-              ],
-              "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+              ]
             },
             "nutrition": {
               "calories": 512,
@@ -1475,6 +1197,7 @@
             "ranked_recipe": {
               "candidate": {
                 "title": "Dinner Stuffed Bell Peppers Skillet",
+                "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -1494,8 +1217,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "2 eggs (about 100 g)",
                     "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -1517,13 +1240,12 @@
                   "pepper"
                 ],
                 "steps": [
-                  "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+                  "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
                   "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                   "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                   "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                   "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-                ],
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                ]
               },
               "nutrition": {
                 "calories": 542,
@@ -1545,6 +1267,7 @@
             "ranked_recipe": {
               "candidate": {
                 "title": "Dinner Chicken Breast Bowl",
+                "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -1563,8 +1286,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "2 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "2 eggs (about 100 g)",
                     "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -1579,12 +1302,11 @@
                   "black pepper"
                 ],
                 "steps": [
-                  "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+                  "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
                   "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                   "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                   "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                ],
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                ]
               },
               "nutrition": {
                 "calories": 512,
@@ -1606,6 +1328,7 @@
         "final_recipes": [
           {
             "title": "Dinner Stuffed Bell Peppers Skillet",
+            "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
             "time_minutes": 30,
             "prep_time_minutes": 10,
             "cook_time_minutes": 20,
@@ -1625,8 +1348,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "2 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "2 eggs (about 100 g)",
                 "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -1648,7 +1371,7 @@
               "pepper"
             ],
             "steps": [
-              "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+              "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
               "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
               "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
               "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
@@ -1666,11 +1389,11 @@
               "note": "Approximate estimate only, not medical advice."
             },
             "goal_fit": "Good fit for high protein using rough nutrition estimates.",
-            "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long.",
             "safety_warnings": []
           },
           {
             "title": "Dinner Chicken Breast Bowl",
+            "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
             "time_minutes": 30,
             "prep_time_minutes": 10,
             "cook_time_minutes": 20,
@@ -1689,8 +1412,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "2 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "2 eggs (about 100 g)",
                 "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -1705,7 +1428,7 @@
               "black pepper"
             ],
             "steps": [
-              "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
+              "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
               "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
               "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
               "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
@@ -1722,27 +1445,15 @@
               "note": "Approximate estimate only, not medical advice."
             },
             "goal_fit": "Good fit for high protein using rough nutrition estimates.",
-            "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire.",
             "safety_warnings": []
           }
         ],
         "steps_run": [
-          "vision",
           "constraints",
           "recipe_planner",
-          "recipe_review",
-          "final_writer"
+          "final_recipe"
         ],
         "hermes_trace": [
-          {
-            "step_name": "vision",
-            "agent_name": "Vision Stage",
-            "action": "call_agent",
-            "handoff_payload": {
-              "input": "no image; using demo fallback"
-            },
-            "decision_note": "Run image detection and ingredient verification once, keeping uncertainty out of confirmed planning."
-          },
           {
             "step_name": "constraints",
             "agent_name": "Constraint Stage",
@@ -1752,7 +1463,7 @@
                 "ingredients": [
                   {
                     "name": "chicken breast",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1761,7 +1472,7 @@
                   },
                   {
                     "name": "eggs",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1770,7 +1481,7 @@
                   },
                   {
                     "name": "cooked rice",
-                    "category": "confirmed",
+                    "category": "grain",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1779,7 +1490,7 @@
                   },
                   {
                     "name": "spinach",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1788,7 +1499,7 @@
                   },
                   {
                     "name": "tomatoes",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1797,7 +1508,7 @@
                   },
                   {
                     "name": "cheddar cheese",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1806,7 +1517,7 @@
                   },
                   {
                     "name": "greek yogurt",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1815,7 +1526,7 @@
                   },
                   {
                     "name": "bell pepper",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1823,9 +1534,7 @@
                     "uncertainty_note": null
                   }
                 ],
-                "clarification_questions": [
-                  "I detected white container on top shelf. What is it?"
-                ]
+                "clarification_questions": []
               },
               "raw_user_preferences": {
                 "goal": "high_protein",
@@ -1853,7 +1562,7 @@
                 ]
               }
             },
-            "decision_note": "Validate user preferences and constraints before recipe planning."
+            "decision_note": "Validate preferences, portions, allergies, time, and tools before planning."
           },
           {
             "step_name": "recipe_planner",
@@ -1864,7 +1573,7 @@
                 "ingredients": [
                   {
                     "name": "chicken breast",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1873,7 +1582,7 @@
                   },
                   {
                     "name": "eggs",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1882,7 +1591,7 @@
                   },
                   {
                     "name": "cooked rice",
-                    "category": "confirmed",
+                    "category": "grain",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1891,7 +1600,7 @@
                   },
                   {
                     "name": "spinach",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1900,7 +1609,7 @@
                   },
                   {
                     "name": "tomatoes",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1909,7 +1618,7 @@
                   },
                   {
                     "name": "cheddar cheese",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1918,7 +1627,7 @@
                   },
                   {
                     "name": "greek yogurt",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1927,7 +1636,7 @@
                   },
                   {
                     "name": "bell pepper",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -1935,9 +1644,7 @@
                     "uncertainty_note": null
                   }
                 ],
-                "clarification_questions": [
-                  "I detected white container on top shelf. What is it?"
-                ]
+                "clarification_questions": []
               },
               "preferences": {
                 "goal": "high_protein",
@@ -1947,6 +1654,7 @@
                 "meals_needed": 2,
                 "meal_type": "dinner",
                 "constraint_resolution": "make_best_effort",
+                "gender": "none",
                 "height_cm": 180,
                 "weight_kg": 82,
                 "available_tools": [
@@ -1954,271 +1662,205 @@
                   "oven"
                 ]
               },
-              "constraint_warnings": []
-            },
-            "decision_note": "Plan recipes from verified ingredients and normalized preferences only."
-          },
-          {
-            "step_name": "recipe_review",
-            "agent_name": "Recipe Review Stage",
-            "action": "call_agent",
-            "handoff_payload": {
-              "recipe_candidates": [
+              "constraint_warnings": [],
+              "retrieved_recipe_references": [
                 {
-                  "title": "Dinner Stuffed Bell Peppers Skillet",
-                  "time_minutes": 30,
-                  "prep_time_minutes": 10,
-                  "cook_time_minutes": 20,
-                  "portions": 2,
-                  "ingredients_used": [
-                    "chicken breast",
-                    "eggs",
-                    "cooked rice",
-                    "spinach"
+                  "title": "Stuffed Bell Peppers",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "4 large bell peppers (any color)",
+                    "1 tsp. olive oil",
+                    "2 medium tomatoes, chopped",
+                    "1 medium squash, diced (yellow)",
+                    "1 medium zucchini, diced",
+                    "1/2 c. onion, diced",
+                    "2 medium cloves garlic, minced",
+                    "2 c. cooked brown rice"
                   ],
-                  "ingredient_amounts": [
-                    {
-                      "name": "chicken breast",
-                      "amount_per_portion": "120 g",
-                      "total_amount": "240 g",
-                      "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "2 eggs",
-                      "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "cooked rice",
-                      "amount_per_portion": "75 g",
-                      "total_amount": "150 g",
-                      "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "spinach",
-                      "amount_per_portion": "80 g",
-                      "total_amount": "160 g",
-                      "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                    }
-                  ],
-                  "missing_ingredients": [
-                    "olive oil",
-                    "salt",
-                    "pepper"
-                  ],
-                  "steps": [
-                    "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
-                    "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
-                    "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
-                    "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
-                    "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-                  ],
-                  "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                  "directions": [
+                    "Preheat oven to 375\u00b0. Cut peppers in half lengthwise. Remove stems, rubs and seeds. Heat oil in a large skillet over medium heat, swirling to cover bottom. Saut crookneck squash, zucchini, onion and garlic until zucchini is tender-crisp (about 4 minutes). Don't overcook. In a medium bowl, combine rice and cheese. Gently stir into skillet. Stuff pepper halves with vegetable mixture. Place in a 9-inch casserole dish. Carefully pour tomato sauce around peppers. Bake, uncovered, for 30 minutes. Serves 8."
+                  ]
                 },
                 {
-                  "title": "Dinner Chicken Breast Bowl",
-                  "time_minutes": 30,
-                  "prep_time_minutes": 10,
-                  "cook_time_minutes": 20,
-                  "portions": 2,
-                  "ingredients_used": [
-                    "chicken breast",
-                    "eggs",
-                    "cooked rice"
+                  "title": "Spinach-Rice Casserole",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "3/4 c. brown rice",
+                    "2 c. vegetable broth",
+                    "1/2 c. grated Cheddar cheese",
+                    "2 Tbsp. minced fresh parsley",
+                    "1 lb. fresh spinach, washed and chopped",
+                    "1/4 tsp. garlic powder",
+                    "1/4 tsp. black pepper",
+                    "2 eggs, beaten"
                   ],
-                  "ingredient_amounts": [
-                    {
-                      "name": "chicken breast",
-                      "amount_per_portion": "120 g",
-                      "total_amount": "240 g",
-                      "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "2 eggs",
-                      "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "cooked rice",
-                      "amount_per_portion": "75 g",
-                      "total_amount": "150 g",
-                      "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                    }
-                  ],
-                  "missing_ingredients": [
-                    "lemon juice or vinegar",
-                    "black pepper"
-                  ],
-                  "steps": [
-                    "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
-                    "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
-                    "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
-                    "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                  ],
-                  "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
-                }
-              ],
-              "preferences": {
-                "goal": "high_protein",
-                "allergies": [],
-                "diet_style": "normal",
-                "max_cooking_time_minutes": 30,
-                "meals_needed": 2,
-                "meal_type": "dinner",
-                "constraint_resolution": "make_best_effort",
-                "height_cm": 180,
-                "weight_kg": 82,
-                "available_tools": [
-                  "pan",
-                  "oven"
-                ]
-              },
-              "allergies": []
-            },
-            "decision_note": "Rank recipes with approximate nutrition and apply allergy safety review."
-          },
-          {
-            "step_name": "final_writer",
-            "agent_name": "Final Writer Stage",
-            "action": "call_agent",
-            "handoff_payload": {
-              "safe_recipes": [
-                {
-                  "ranked_recipe": {
-                    "candidate": {
-                      "title": "Dinner Stuffed Bell Peppers Skillet",
-                      "time_minutes": 30,
-                      "prep_time_minutes": 10,
-                      "cook_time_minutes": 20,
-                      "portions": 2,
-                      "ingredients_used": [
-                        "chicken breast",
-                        "eggs",
-                        "cooked rice",
-                        "spinach"
-                      ],
-                      "ingredient_amounts": [
-                        {
-                          "name": "chicken breast",
-                          "amount_per_portion": "120 g",
-                          "total_amount": "240 g",
-                          "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "eggs",
-                          "amount_per_portion": "1 egg",
-                          "total_amount": "2 eggs",
-                          "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "cooked rice",
-                          "amount_per_portion": "75 g",
-                          "total_amount": "150 g",
-                          "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "spinach",
-                          "amount_per_portion": "80 g",
-                          "total_amount": "160 g",
-                          "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                        }
-                      ],
-                      "missing_ingredients": [
-                        "olive oil",
-                        "salt",
-                        "pepper"
-                      ],
-                      "steps": [
-                        "Measure the ingredients: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
-                        "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
-                        "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
-                        "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
-                        "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
-                      ],
-                      "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
-                    },
-                    "nutrition": {
-                      "calories": 542,
-                      "protein_g": 47,
-                      "carbs_g": 36,
-                      "fat_g": 18,
-                      "calories_total": 1084,
-                      "protein_total_g": 94,
-                      "estimated_daily_calorie_need": 2460,
-                      "goal_note": "Per portion estimate: 542 kcal and 47 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: high protein.",
-                      "note": "Approximate estimate only, not medical advice."
-                    },
-                    "goal_fit": "Good fit for high protein using rough nutrition estimates.",
-                    "rank_score": 47.0
-                  },
-                  "safety_warnings": []
+                  "directions": [
+                    "Cook for 40 minutes the brown rice and vegetable broth. Prepare the Cheddar cheese, parsley and fresh spinach while rice is cooking.",
+                    "After rice has cooked 30 minutes, preheat oven to 350\u00b0. Mix cooked rice with the Cheddar cheese mixture adding garlic powder, black pepper and eggs.",
+                    "Spoon mixture into greased casserole dish."
+                  ]
                 },
                 {
-                  "ranked_recipe": {
-                    "candidate": {
-                      "title": "Dinner Chicken Breast Bowl",
-                      "time_minutes": 30,
-                      "prep_time_minutes": 10,
-                      "cook_time_minutes": 20,
-                      "portions": 2,
-                      "ingredients_used": [
-                        "chicken breast",
-                        "eggs",
-                        "cooked rice"
-                      ],
-                      "ingredient_amounts": [
-                        {
-                          "name": "chicken breast",
-                          "amount_per_portion": "120 g",
-                          "total_amount": "240 g",
-                          "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "eggs",
-                          "amount_per_portion": "1 egg",
-                          "total_amount": "2 eggs",
-                          "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "cooked rice",
-                          "amount_per_portion": "75 g",
-                          "total_amount": "150 g",
-                          "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
-                        }
-                      ],
-                      "missing_ingredients": [
-                        "lemon juice or vinegar",
-                        "black pepper"
-                      ],
-                      "steps": [
-                        "Measure the bowl base: 240 g chicken breast, 2 eggs eggs, 150 g cooked rice.",
-                        "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
-                        "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
-                        "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                      ],
-                      "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
-                    },
-                    "nutrition": {
-                      "calories": 512,
-                      "protein_g": 46,
-                      "carbs_g": 30,
-                      "fat_g": 18,
-                      "calories_total": 1024,
-                      "protein_total_g": 92,
-                      "estimated_daily_calorie_need": 2460,
-                      "goal_note": "Per portion estimate: 512 kcal and 46 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: high protein.",
-                      "note": "Approximate estimate only, not medical advice."
-                    },
-                    "goal_fit": "Good fit for high protein using rough nutrition estimates.",
-                    "rank_score": 46.0
-                  },
-                  "safety_warnings": []
+                  "title": "Tortilla Soup",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "1 Tbsp. vegetable oil",
+                    "12 corn tortillas, cut in strips",
+                    "2 Tbsp. chili powder",
+                    "1/2 tsp. cayenne pepper",
+                    "1 Tbsp. paprika",
+                    "1 1/2 Tbsp. cumin",
+                    "1 Tbsp. garlic, chopped",
+                    "2 bay leaves"
+                  ],
+                  "directions": [
+                    "Heat vegetable oil in a large pot set over medium-high heat. Add the tortillas, chili powder, cayenne pepper, paprika, cumin, garlic and bay leaves and saute for 10 minutes.",
+                    "Add onion, red bell pepper and cilantro; cook 5 minutes.",
+                    "Add tomatoes and cook 5 minutes."
+                  ]
                 }
               ]
             },
-            "decision_note": "Write final cards only after allergy safety has reviewed the ranked recipes."
+            "decision_note": "Plan recipes, calculate portions, retrieve RAG references, and rank rough nutrition."
+          },
+          {
+            "step_name": "final_recipe",
+            "agent_name": "Final Recipe Stage",
+            "action": "call_agent",
+            "handoff_payload": {
+              "ranked_recipes": [
+                {
+                  "candidate": {
+                    "title": "Dinner Stuffed Bell Peppers Skillet",
+                    "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 30 minutes.",
+                    "time_minutes": 30,
+                    "prep_time_minutes": 10,
+                    "cook_time_minutes": 20,
+                    "portions": 2,
+                    "ingredients_used": [
+                      "chicken breast",
+                      "eggs",
+                      "cooked rice",
+                      "spinach"
+                    ],
+                    "ingredient_amounts": [
+                      {
+                        "name": "chicken breast",
+                        "amount_per_portion": "120 g",
+                        "total_amount": "240 g",
+                        "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "2 eggs (about 100 g)",
+                        "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "cooked rice",
+                        "amount_per_portion": "75 g",
+                        "total_amount": "150 g",
+                        "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "spinach",
+                        "amount_per_portion": "80 g",
+                        "total_amount": "160 g",
+                        "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
+                      }
+                    ],
+                    "missing_ingredients": [
+                      "olive oil",
+                      "salt",
+                      "pepper"
+                    ],
+                    "steps": [
+                      "Measure the ingredients: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice, 160 g spinach for 2 portion(s).",
+                      "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
+                      "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
+                      "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
+                      "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 2 dinner portion(s)."
+                    ]
+                  },
+                  "nutrition": {
+                    "calories": 542,
+                    "protein_g": 47,
+                    "carbs_g": 36,
+                    "fat_g": 18,
+                    "calories_total": 1084,
+                    "protein_total_g": 94,
+                    "estimated_daily_calorie_need": 2460,
+                    "goal_note": "Per portion estimate: 542 kcal and 47 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: high protein.",
+                    "note": "Approximate estimate only, not medical advice."
+                  },
+                  "goal_fit": "Good fit for high protein using rough nutrition estimates.",
+                  "rank_score": 47.0
+                },
+                {
+                  "candidate": {
+                    "title": "Dinner Chicken Breast Bowl",
+                    "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
+                    "time_minutes": 30,
+                    "prep_time_minutes": 10,
+                    "cook_time_minutes": 20,
+                    "portions": 2,
+                    "ingredients_used": [
+                      "chicken breast",
+                      "eggs",
+                      "cooked rice"
+                    ],
+                    "ingredient_amounts": [
+                      {
+                        "name": "chicken breast",
+                        "amount_per_portion": "120 g",
+                        "total_amount": "240 g",
+                        "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "2 eggs (about 100 g)",
+                        "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "cooked rice",
+                        "amount_per_portion": "75 g",
+                        "total_amount": "150 g",
+                        "notes": "Calculated for 2 portion(s): per-portion amount multiplied by requested portions."
+                      }
+                    ],
+                    "missing_ingredients": [
+                      "lemon juice or vinegar",
+                      "black pepper"
+                    ],
+                    "steps": [
+                      "Measure the bowl base: 240 g chicken breast, 2 eggs (about 100 g) eggs, 150 g cooked rice.",
+                      "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
+                      "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
+                      "Divide into 2 dinner portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
+                    ]
+                  },
+                  "nutrition": {
+                    "calories": 512,
+                    "protein_g": 46,
+                    "carbs_g": 30,
+                    "fat_g": 18,
+                    "calories_total": 1024,
+                    "protein_total_g": 92,
+                    "estimated_daily_calorie_need": 2460,
+                    "goal_note": "Per portion estimate: 512 kcal and 46 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: high protein.",
+                    "note": "Approximate estimate only, not medical advice."
+                  },
+                  "goal_fit": "Good fit for high protein using rough nutrition estimates.",
+                  "rank_score": 46.0
+                }
+              ],
+              "allergies": []
+            },
+            "decision_note": "Apply allergy safety and write final cards."
           }
         ]
       }
@@ -2253,16 +1895,14 @@
         ]
       },
       "metrics": {
-        "hermes_stage_count": 5,
+        "hermes_stage_count": 3,
         "recipe_rag_ready": true,
         "hermes_steps": [
-          "vision",
           "constraints",
           "recipe_planner",
-          "recipe_review",
-          "final_writer"
+          "final_recipe"
         ],
-        "monitorable_trace_entries": 5,
+        "monitorable_trace_entries": 3,
         "final_recipe_count": 2,
         "average_cooking_detail_score": 0.8,
         "portion_amount_coverage": 1.0,
@@ -2275,165 +1915,15 @@
       },
       "events": [
         {
-          "time": "18:55:32",
-          "agent": "Vision Ingredient Agent",
-          "message": "Detecting visible ingredients from the photo.",
+          "time": "22:46:34",
+          "agent": "Ingredient Input",
+          "message": "No image uploaded, so Vision Agent was skipped and typed ingredients were used directly.",
           "details": {
-            "input": "no image; using demo fallback"
-          }
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Vision Ingredient Agent",
-          "message": "Detected 5 ingredient candidates.",
-          "details": {
-            "output": {
-              "ingredients": [
-                {
-                  "name": "eggs",
-                  "category": "protein",
-                  "quantity": "6",
-                  "confidence": 0.92,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "spinach",
-                  "category": "vegetable",
-                  "quantity": "1 bag",
-                  "confidence": 0.78,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "Greek yogurt",
-                  "category": "dairy",
-                  "quantity": "1 tub",
-                  "confidence": 0.68,
-                  "use_soon": true,
-                  "possible_variants": [
-                    "dairy Greek yogurt",
-                    "coconut yogurt"
-                  ],
-                  "uncertainty_note": "The tub style is visible, but the exact base may affect dairy allergies."
-                },
-                {
-                  "name": "cheddar cheese",
-                  "category": "dairy",
-                  "quantity": "small block",
-                  "confidence": 0.74,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "tomatoes",
-                  "category": "vegetable",
-                  "quantity": "3",
-                  "confidence": 0.84,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                }
-              ],
-              "uncertain_items": [
-                "white container on top shelf"
-              ]
-            },
-            "reason_summary": "Low confidence or ambiguous package types are surfaced as uncertainty instead of treated as facts."
-          }
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Ingredient Verification Agent",
-          "message": "Normalizing names and checking uncertainty.",
-          "details": {
-            "input": {
-              "ingredients": [
-                {
-                  "name": "eggs",
-                  "category": "protein",
-                  "quantity": "6",
-                  "confidence": 0.92,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "spinach",
-                  "category": "vegetable",
-                  "quantity": "1 bag",
-                  "confidence": 0.78,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "Greek yogurt",
-                  "category": "dairy",
-                  "quantity": "1 tub",
-                  "confidence": 0.68,
-                  "use_soon": true,
-                  "possible_variants": [
-                    "dairy Greek yogurt",
-                    "coconut yogurt"
-                  ],
-                  "uncertainty_note": "The tub style is visible, but the exact base may affect dairy allergies."
-                },
-                {
-                  "name": "cheddar cheese",
-                  "category": "dairy",
-                  "quantity": "small block",
-                  "confidence": 0.74,
-                  "use_soon": false,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                },
-                {
-                  "name": "tomatoes",
-                  "category": "vegetable",
-                  "quantity": "3",
-                  "confidence": 0.84,
-                  "use_soon": true,
-                  "possible_variants": [],
-                  "uncertainty_note": null
-                }
-              ],
-              "uncertain_items": [
-                "white container on top shelf"
-              ]
-            }
-          }
-        },
-        {
-          "time": "18:55:32",
-          "agent": "User Confirmation",
-          "message": "Using typed confirmed ingredients instead of photo detections.",
-          "details": {
-            "confirmed_ingredients": [
-              "chicken breast",
-              "eggs",
-              "cooked rice",
-              "spinach",
-              "tomatoes",
-              "cheddar cheese",
-              "Greek yogurt",
-              "bell pepper"
-            ]
-          }
-        },
-        {
-          "time": "18:55:32",
-          "agent": "Ingredient Verification Agent",
-          "message": "Confirmed ingredients: chicken breast, eggs, cooked rice, spinach, tomatoes, cheddar cheese, greek yogurt, bell pepper",
-          "details": {
-            "output": {
+            "verified_output": {
               "ingredients": [
                 {
                   "name": "chicken breast",
-                  "category": "confirmed",
+                  "category": "protein",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2442,7 +1932,7 @@
                 },
                 {
                   "name": "eggs",
-                  "category": "confirmed",
+                  "category": "protein",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2451,7 +1941,7 @@
                 },
                 {
                   "name": "cooked rice",
-                  "category": "confirmed",
+                  "category": "grain",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2460,7 +1950,7 @@
                 },
                 {
                   "name": "spinach",
-                  "category": "confirmed",
+                  "category": "vegetable",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2469,7 +1959,7 @@
                 },
                 {
                   "name": "tomatoes",
-                  "category": "confirmed",
+                  "category": "vegetable",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2478,7 +1968,7 @@
                 },
                 {
                   "name": "cheddar cheese",
-                  "category": "confirmed",
+                  "category": "dairy",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2487,7 +1977,7 @@
                 },
                 {
                   "name": "greek yogurt",
-                  "category": "confirmed",
+                  "category": "dairy",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2496,7 +1986,7 @@
                 },
                 {
                   "name": "bell pepper",
-                  "category": "confirmed",
+                  "category": "vegetable",
                   "quantity": null,
                   "confidence": 1.0,
                   "use_soon": false,
@@ -2504,18 +1994,15 @@
                   "uncertainty_note": null
                 }
               ],
-              "clarification_questions": [
-                "I detected white container on top shelf. What is it?"
-              ]
+              "clarification_questions": []
             },
-            "low_confidence_items_requiring_confirmation": [],
-            "reason_summary": "The recipe planner only receives this verified list."
+            "reason_summary": "Skipping vision avoids unnecessary model calls when the user already typed confirmed ingredients."
           }
         },
         {
-          "time": "18:55:32",
-          "agent": "User Preference Agent",
-          "message": "Validating cooking goals, allergies, time, meal type, servings, and tools.",
+          "time": "22:46:34",
+          "agent": "Constraints Agent",
+          "message": "Validating cooking goals, allergies, portions, time, and tools.",
           "details": {
             "input": {
               "goal": "healthy",
@@ -2547,8 +2034,8 @@
           }
         },
         {
-          "time": "18:55:32",
-          "agent": "User Preference Agent",
+          "time": "22:46:34",
+          "agent": "Constraints Agent",
           "message": "Goal is healthy.",
           "details": {
             "output": {
@@ -2561,6 +2048,7 @@
               "meals_needed": 4,
               "meal_type": "meal_prep",
               "constraint_resolution": "make_best_effort",
+              "gender": "none",
               "height_cm": 180,
               "weight_kg": 82,
               "available_tools": [
@@ -2569,20 +2057,20 @@
               ]
             },
             "constraint_warnings": [],
-            "reason_summary": "Serving count and cooking time are checked before planning so impossible requests become visible."
+            "reason_summary": "Serving count, cooking time, allergies, and available tools are checked before planning."
           }
         },
         {
-          "time": "18:55:32",
+          "time": "22:46:36",
           "agent": "Recipe Planner Agent",
-          "message": "Generating recipe candidates from confirmed ingredients.",
+          "message": "Generating recipe candidates with RAG references, portion math, cooking details, and rough nutrition.",
           "details": {
             "input": {
               "ingredients": {
                 "ingredients": [
                   {
                     "name": "chicken breast",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2591,7 +2079,7 @@
                   },
                   {
                     "name": "eggs",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2600,7 +2088,7 @@
                   },
                   {
                     "name": "cooked rice",
-                    "category": "confirmed",
+                    "category": "grain",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2609,7 +2097,7 @@
                   },
                   {
                     "name": "spinach",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2618,7 +2106,7 @@
                   },
                   {
                     "name": "tomatoes",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2627,7 +2115,7 @@
                   },
                   {
                     "name": "cheddar cheese",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2636,7 +2124,7 @@
                   },
                   {
                     "name": "greek yogurt",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2645,7 +2133,7 @@
                   },
                   {
                     "name": "bell pepper",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -2653,9 +2141,7 @@
                     "uncertainty_note": null
                   }
                 ],
-                "clarification_questions": [
-                  "I detected white container on top shelf. What is it?"
-                ]
+                "clarification_questions": []
               },
               "preferences": {
                 "goal": "healthy",
@@ -2667,6 +2153,7 @@
                 "meals_needed": 4,
                 "meal_type": "meal_prep",
                 "constraint_resolution": "make_best_effort",
+                "gender": "none",
                 "height_cm": 180,
                 "weight_kg": 82,
                 "available_tools": [
@@ -2674,24 +2161,79 @@
                   "oven"
                 ]
               },
-              "constraint_warnings": []
+              "constraint_warnings": [],
+              "retrieved_recipe_references": [
+                {
+                  "title": "Stuffed Bell Peppers",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "4 large bell peppers (any color)",
+                    "1 tsp. olive oil",
+                    "2 medium tomatoes, chopped",
+                    "1 medium squash, diced (yellow)",
+                    "1 medium zucchini, diced",
+                    "1/2 c. onion, diced",
+                    "2 medium cloves garlic, minced",
+                    "2 c. cooked brown rice"
+                  ],
+                  "directions": [
+                    "Preheat oven to 375\u00b0. Cut peppers in half lengthwise. Remove stems, rubs and seeds. Heat oil in a large skillet over medium heat, swirling to cover bottom. Saut crookneck squash, zucchini, onion and garlic until zucchini is tender-crisp (about 4 minutes). Don't overcook. In a medium bowl, combine rice and cheese. Gently stir into skillet. Stuff pepper halves with vegetable mixture. Place in a 9-inch casserole dish. Carefully pour tomato sauce around peppers. Bake, uncovered, for 30 minutes. Serves 8."
+                  ]
+                },
+                {
+                  "title": "Spinach-Rice Casserole",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "3/4 c. brown rice",
+                    "2 c. vegetable broth",
+                    "1/2 c. grated Cheddar cheese",
+                    "2 Tbsp. minced fresh parsley",
+                    "1 lb. fresh spinach, washed and chopped",
+                    "1/4 tsp. garlic powder",
+                    "1/4 tsp. black pepper",
+                    "2 eggs, beaten"
+                  ],
+                  "directions": [
+                    "Cook for 40 minutes the brown rice and vegetable broth. Prepare the Cheddar cheese, parsley and fresh spinach while rice is cooking.",
+                    "After rice has cooked 30 minutes, preheat oven to 350\u00b0. Mix cooked rice with the Cheddar cheese mixture adding garlic powder, black pepper and eggs.",
+                    "Spoon mixture into greased casserole dish."
+                  ]
+                },
+                {
+                  "title": "Tortilla Soup",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "1 Tbsp. vegetable oil",
+                    "12 corn tortillas, cut in strips",
+                    "2 Tbsp. chili powder",
+                    "1/2 tsp. cayenne pepper",
+                    "1 Tbsp. paprika",
+                    "1 1/2 Tbsp. cumin",
+                    "1 Tbsp. garlic, chopped",
+                    "2 bay leaves"
+                  ],
+                  "directions": [
+                    "Heat vegetable oil in a large pot set over medium-high heat. Add the tortillas, chili powder, cayenne pepper, paprika, cumin, garlic and bay leaves and saute for 10 minutes.",
+                    "Add onion, red bell pepper and cilantro; cook 5 minutes.",
+                    "Add tomatoes and cook 5 minutes."
+                  ]
+                }
+              ]
             }
           }
         },
         {
-          "time": "18:55:33",
+          "time": "22:46:37",
           "agent": "Recipe Planner Agent",
-          "message": "Created 2 recipe candidates.",
-          "details": {}
-        },
-        {
-          "time": "18:55:33",
-          "agent": "Recipe Planner Agent",
-          "message": "Recipe planning output is ready.",
+          "message": "Created 2 candidates and ranked 2 recipes.",
           "details": {
-            "output": [
+            "recipe_candidates": [
               {
                 "title": "Meal Prep Stuffed Bell Peppers Skillet",
+                "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
                 "time_minutes": 45,
                 "prep_time_minutes": 15,
                 "cook_time_minutes": 30,
@@ -2711,8 +2253,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "4 eggs (about 200 g)",
                     "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -2734,16 +2276,16 @@
                   "pepper"
                 ],
                 "steps": [
-                  "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+                  "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
                   "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                   "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                   "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                   "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-                ],
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                ]
               },
               {
                 "title": "Meal Prep Chicken Breast Bowl",
+                "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -2762,8 +2304,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "4 eggs (about 200 g)",
                     "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -2778,130 +2320,18 @@
                   "black pepper"
                 ],
                 "steps": [
-                  "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+                  "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
                   "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                   "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                   "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                ],
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                ]
               }
             ],
-            "reason_summary": "Recipes are expected to respect meal type, time, portions, allergies, and ambiguous ingredient variants."
-          }
-        },
-        {
-          "time": "18:55:33",
-          "agent": "Nutrition Goal Agent",
-          "message": "Ranking recipes with rough nutrition estimates.",
-          "details": {
-            "input": [
-              {
-                "title": "Meal Prep Stuffed Bell Peppers Skillet",
-                "time_minutes": 45,
-                "prep_time_minutes": 15,
-                "cook_time_minutes": 30,
-                "portions": 4,
-                "ingredients_used": [
-                  "chicken breast",
-                  "eggs",
-                  "cooked rice",
-                  "spinach"
-                ],
-                "ingredient_amounts": [
-                  {
-                    "name": "chicken breast",
-                    "amount_per_portion": "120 g",
-                    "total_amount": "480 g",
-                    "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
-                    "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "cooked rice",
-                    "amount_per_portion": "75 g",
-                    "total_amount": "300 g",
-                    "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "spinach",
-                    "amount_per_portion": "80 g",
-                    "total_amount": "320 g",
-                    "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                  }
-                ],
-                "missing_ingredients": [
-                  "olive oil",
-                  "salt",
-                  "pepper"
-                ],
-                "steps": [
-                  "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
-                  "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
-                  "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
-                  "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
-                  "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-                ],
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
-              },
-              {
-                "title": "Meal Prep Chicken Breast Bowl",
-                "time_minutes": 30,
-                "prep_time_minutes": 10,
-                "cook_time_minutes": 20,
-                "portions": 4,
-                "ingredients_used": [
-                  "chicken breast",
-                  "eggs",
-                  "cooked rice"
-                ],
-                "ingredient_amounts": [
-                  {
-                    "name": "chicken breast",
-                    "amount_per_portion": "120 g",
-                    "total_amount": "480 g",
-                    "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
-                    "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                  },
-                  {
-                    "name": "cooked rice",
-                    "amount_per_portion": "75 g",
-                    "total_amount": "300 g",
-                    "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                  }
-                ],
-                "missing_ingredients": [
-                  "lemon juice or vinegar",
-                  "black pepper"
-                ],
-                "steps": [
-                  "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
-                  "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
-                  "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
-                  "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                ],
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
-              }
-            ]
-          }
-        },
-        {
-          "time": "18:55:33",
-          "agent": "Nutrition Goal Agent",
-          "message": "Ranked 2 recipes.",
-          "details": {
-            "output": [
+            "ranked_recipes": [
               {
                 "candidate": {
                   "title": "Meal Prep Chicken Breast Bowl",
+                  "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                   "time_minutes": 30,
                   "prep_time_minutes": 10,
                   "cook_time_minutes": 20,
@@ -2920,8 +2350,8 @@
                     },
                     {
                       "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "4 eggs",
+                      "amount_per_portion": "1 egg (about 50 g)",
+                      "total_amount": "4 eggs (about 200 g)",
                       "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                     },
                     {
@@ -2936,12 +2366,11 @@
                     "black pepper"
                   ],
                   "steps": [
-                    "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+                    "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
                     "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                     "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                     "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                  ],
-                  "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                  ]
                 },
                 "nutrition": {
                   "calories": 512,
@@ -2960,6 +2389,7 @@
               {
                 "candidate": {
                   "title": "Meal Prep Stuffed Bell Peppers Skillet",
+                  "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
                   "time_minutes": 45,
                   "prep_time_minutes": 15,
                   "cook_time_minutes": 30,
@@ -2979,8 +2409,8 @@
                     },
                     {
                       "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "4 eggs",
+                      "amount_per_portion": "1 egg (about 50 g)",
+                      "total_amount": "4 eggs (about 200 g)",
                       "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                     },
                     {
@@ -3002,13 +2432,12 @@
                     "pepper"
                   ],
                   "steps": [
-                    "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+                    "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
                     "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                     "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                     "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                     "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-                  ],
-                  "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                  ]
                 },
                 "nutrition": {
                   "calories": 542,
@@ -3025,13 +2454,13 @@
                 "rank_score": 35.0
               }
             ],
-            "reason_summary": "Nutrition values are rough estimates only, not medical advice."
+            "reason_summary": "This single agent handles RAG-grounded planning, portion calculations, cooking specificity, and rough nutrition ranking."
           }
         },
         {
-          "time": "18:55:33",
-          "agent": "Allergy Safety Agent",
-          "message": "Filtering recipes against declared allergies.",
+          "time": "22:46:37",
+          "agent": "Final Recipe Agent",
+          "message": "Filtering allergens and writing final recipe cards.",
           "details": {
             "input_allergies": [
               "dairy"
@@ -3039,15 +2468,16 @@
           }
         },
         {
-          "time": "18:55:33",
-          "agent": "Allergy Safety Agent",
-          "message": "2 recipes passed safety filtering.",
+          "time": "22:46:37",
+          "agent": "Final Recipe Agent",
+          "message": "Prepared 2 final recipe cards.",
           "details": {
-            "output": [
+            "safe_recipes": [
               {
                 "ranked_recipe": {
                   "candidate": {
                     "title": "Meal Prep Chicken Breast Bowl",
+                    "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                     "time_minutes": 30,
                     "prep_time_minutes": 10,
                     "cook_time_minutes": 20,
@@ -3066,8 +2496,8 @@
                       },
                       {
                         "name": "eggs",
-                        "amount_per_portion": "1 egg",
-                        "total_amount": "4 eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "4 eggs (about 200 g)",
                         "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                       },
                       {
@@ -3082,12 +2512,11 @@
                       "black pepper"
                     ],
                     "steps": [
-                      "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+                      "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
                       "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                       "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                       "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                    ],
-                    "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                    ]
                   },
                   "nutrition": {
                     "calories": 512,
@@ -3111,6 +2540,7 @@
                 "ranked_recipe": {
                   "candidate": {
                     "title": "Meal Prep Stuffed Bell Peppers Skillet",
+                    "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
                     "time_minutes": 45,
                     "prep_time_minutes": 15,
                     "cook_time_minutes": 30,
@@ -3130,8 +2560,8 @@
                       },
                       {
                         "name": "eggs",
-                        "amount_per_portion": "1 egg",
-                        "total_amount": "4 eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "4 eggs (about 200 g)",
                         "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                       },
                       {
@@ -3153,13 +2583,12 @@
                       "pepper"
                     ],
                     "steps": [
-                      "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+                      "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
                       "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                       "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                       "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                       "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-                    ],
-                    "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                    ]
                   },
                   "nutrition": {
                     "calories": 542,
@@ -3180,23 +2609,10 @@
                 ]
               }
             ],
-            "reason_summary": "Recipes with direct allergen conflicts are removed; uncertain hidden allergens become warnings."
-          }
-        },
-        {
-          "time": "18:55:33",
-          "agent": "Final Recipe Writer Agent",
-          "message": "Writing final recipe cards.",
-          "details": {}
-        },
-        {
-          "time": "18:55:33",
-          "agent": "Final Recipe Writer Agent",
-          "message": "Prepared 2 final recipe cards.",
-          "details": {
-            "output": [
+            "final_recipes": [
               {
                 "title": "Meal Prep Chicken Breast Bowl",
+                "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -3215,8 +2631,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "4 eggs (about 200 g)",
                     "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -3231,7 +2647,7 @@
                   "black pepper"
                 ],
                 "steps": [
-                  "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+                  "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
                   "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                   "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                   "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
@@ -3248,13 +2664,13 @@
                   "note": "Approximate estimate only, not medical advice."
                 },
                 "goal_fit": "Good fit for healthy using rough nutrition estimates.",
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire.",
                 "safety_warnings": [
                   "Check packaged ingredients for hidden dairy before cooking."
                 ]
               },
               {
                 "title": "Meal Prep Stuffed Bell Peppers Skillet",
+                "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
                 "time_minutes": 45,
                 "prep_time_minutes": 15,
                 "cook_time_minutes": 30,
@@ -3274,8 +2690,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "4 eggs (about 200 g)",
                     "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -3297,7 +2713,7 @@
                   "pepper"
                 ],
                 "steps": [
-                  "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+                  "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
                   "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                   "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                   "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
@@ -3315,76 +2731,25 @@
                   "note": "Approximate estimate only, not medical advice."
                 },
                 "goal_fit": "Good fit for healthy using rough nutrition estimates.",
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long.",
                 "safety_warnings": [
                   "Check packaged ingredients for hidden dairy before cooking."
                 ]
               }
-            ]
+            ],
+            "reason_summary": "This single agent removes direct allergen conflicts, adds safety warnings, and formats final user-facing recipe cards."
           }
         }
       ],
       "result": {
         "detected_ingredients": {
-          "ingredients": [
-            {
-              "name": "eggs",
-              "category": "protein",
-              "quantity": "6",
-              "confidence": 0.92,
-              "use_soon": false,
-              "possible_variants": [],
-              "uncertainty_note": null
-            },
-            {
-              "name": "spinach",
-              "category": "vegetable",
-              "quantity": "1 bag",
-              "confidence": 0.78,
-              "use_soon": true,
-              "possible_variants": [],
-              "uncertainty_note": null
-            },
-            {
-              "name": "Greek yogurt",
-              "category": "dairy",
-              "quantity": "1 tub",
-              "confidence": 0.68,
-              "use_soon": true,
-              "possible_variants": [
-                "dairy Greek yogurt",
-                "coconut yogurt"
-              ],
-              "uncertainty_note": "The tub style is visible, but the exact base may affect dairy allergies."
-            },
-            {
-              "name": "cheddar cheese",
-              "category": "dairy",
-              "quantity": "small block",
-              "confidence": 0.74,
-              "use_soon": false,
-              "possible_variants": [],
-              "uncertainty_note": null
-            },
-            {
-              "name": "tomatoes",
-              "category": "vegetable",
-              "quantity": "3",
-              "confidence": 0.84,
-              "use_soon": true,
-              "possible_variants": [],
-              "uncertainty_note": null
-            }
-          ],
-          "uncertain_items": [
-            "white container on top shelf"
-          ]
+          "ingredients": [],
+          "uncertain_items": []
         },
         "verified_ingredients": {
           "ingredients": [
             {
               "name": "chicken breast",
-              "category": "confirmed",
+              "category": "protein",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3393,7 +2758,7 @@
             },
             {
               "name": "eggs",
-              "category": "confirmed",
+              "category": "protein",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3402,7 +2767,7 @@
             },
             {
               "name": "cooked rice",
-              "category": "confirmed",
+              "category": "grain",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3411,7 +2776,7 @@
             },
             {
               "name": "spinach",
-              "category": "confirmed",
+              "category": "vegetable",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3420,7 +2785,7 @@
             },
             {
               "name": "tomatoes",
-              "category": "confirmed",
+              "category": "vegetable",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3429,7 +2794,7 @@
             },
             {
               "name": "cheddar cheese",
-              "category": "confirmed",
+              "category": "dairy",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3438,7 +2803,7 @@
             },
             {
               "name": "greek yogurt",
-              "category": "confirmed",
+              "category": "dairy",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3447,7 +2812,7 @@
             },
             {
               "name": "bell pepper",
-              "category": "confirmed",
+              "category": "vegetable",
               "quantity": null,
               "confidence": 1.0,
               "use_soon": false,
@@ -3455,9 +2820,7 @@
               "uncertainty_note": null
             }
           ],
-          "clarification_questions": [
-            "I detected white container on top shelf. What is it?"
-          ]
+          "clarification_questions": []
         },
         "preferences": {
           "goal": "healthy",
@@ -3469,6 +2832,7 @@
           "meals_needed": 4,
           "meal_type": "meal_prep",
           "constraint_resolution": "make_best_effort",
+          "gender": "none",
           "height_cm": 180,
           "weight_kg": 82,
           "available_tools": [
@@ -3479,6 +2843,7 @@
         "recipe_candidates": [
           {
             "title": "Meal Prep Stuffed Bell Peppers Skillet",
+            "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
             "time_minutes": 45,
             "prep_time_minutes": 15,
             "cook_time_minutes": 30,
@@ -3498,8 +2863,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "4 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "4 eggs (about 200 g)",
                 "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -3521,16 +2886,16 @@
               "pepper"
             ],
             "steps": [
-              "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+              "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
               "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
               "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
               "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
               "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-            ],
-            "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+            ]
           },
           {
             "title": "Meal Prep Chicken Breast Bowl",
+            "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
             "time_minutes": 30,
             "prep_time_minutes": 10,
             "cook_time_minutes": 20,
@@ -3549,8 +2914,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "4 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "4 eggs (about 200 g)",
                 "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -3565,18 +2930,18 @@
               "black pepper"
             ],
             "steps": [
-              "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+              "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
               "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
               "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
               "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-            ],
-            "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+            ]
           }
         ],
         "ranked_recipes": [
           {
             "candidate": {
               "title": "Meal Prep Chicken Breast Bowl",
+              "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
               "time_minutes": 30,
               "prep_time_minutes": 10,
               "cook_time_minutes": 20,
@@ -3595,8 +2960,8 @@
                 },
                 {
                   "name": "eggs",
-                  "amount_per_portion": "1 egg",
-                  "total_amount": "4 eggs",
+                  "amount_per_portion": "1 egg (about 50 g)",
+                  "total_amount": "4 eggs (about 200 g)",
                   "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                 },
                 {
@@ -3611,12 +2976,11 @@
                 "black pepper"
               ],
               "steps": [
-                "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+                "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
                 "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                 "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                 "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-              ],
-              "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+              ]
             },
             "nutrition": {
               "calories": 512,
@@ -3635,6 +2999,7 @@
           {
             "candidate": {
               "title": "Meal Prep Stuffed Bell Peppers Skillet",
+              "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
               "time_minutes": 45,
               "prep_time_minutes": 15,
               "cook_time_minutes": 30,
@@ -3654,8 +3019,8 @@
                 },
                 {
                   "name": "eggs",
-                  "amount_per_portion": "1 egg",
-                  "total_amount": "4 eggs",
+                  "amount_per_portion": "1 egg (about 50 g)",
+                  "total_amount": "4 eggs (about 200 g)",
                   "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                 },
                 {
@@ -3677,13 +3042,12 @@
                 "pepper"
               ],
               "steps": [
-                "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+                "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
                 "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                 "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                 "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                 "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-              ],
-              "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+              ]
             },
             "nutrition": {
               "calories": 542,
@@ -3705,6 +3069,7 @@
             "ranked_recipe": {
               "candidate": {
                 "title": "Meal Prep Chicken Breast Bowl",
+                "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
                 "time_minutes": 30,
                 "prep_time_minutes": 10,
                 "cook_time_minutes": 20,
@@ -3723,8 +3088,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "4 eggs (about 200 g)",
                     "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -3739,12 +3104,11 @@
                   "black pepper"
                 ],
                 "steps": [
-                  "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+                  "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
                   "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
                   "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
                   "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                ],
-                "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                ]
               },
               "nutrition": {
                 "calories": 512,
@@ -3768,6 +3132,7 @@
             "ranked_recipe": {
               "candidate": {
                 "title": "Meal Prep Stuffed Bell Peppers Skillet",
+                "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
                 "time_minutes": 45,
                 "prep_time_minutes": 15,
                 "cook_time_minutes": 30,
@@ -3787,8 +3152,8 @@
                   },
                   {
                     "name": "eggs",
-                    "amount_per_portion": "1 egg",
-                    "total_amount": "4 eggs",
+                    "amount_per_portion": "1 egg (about 50 g)",
+                    "total_amount": "4 eggs (about 200 g)",
                     "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
                   },
                   {
@@ -3810,13 +3175,12 @@
                   "pepper"
                 ],
                 "steps": [
-                  "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+                  "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
                   "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
                   "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
                   "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
                   "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-                ],
-                "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                ]
               },
               "nutrition": {
                 "calories": 542,
@@ -3840,6 +3204,7 @@
         "final_recipes": [
           {
             "title": "Meal Prep Chicken Breast Bowl",
+            "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
             "time_minutes": 30,
             "prep_time_minutes": 10,
             "cook_time_minutes": 20,
@@ -3858,8 +3223,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "4 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "4 eggs (about 200 g)",
                 "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -3874,7 +3239,7 @@
               "black pepper"
             ],
             "steps": [
-              "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
+              "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
               "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
               "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
               "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
@@ -3891,13 +3256,13 @@
               "note": "Approximate estimate only, not medical advice."
             },
             "goal_fit": "Good fit for healthy using rough nutrition estimates.",
-            "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire.",
             "safety_warnings": [
               "Check packaged ingredients for hidden dairy before cooking."
             ]
           },
           {
             "title": "Meal Prep Stuffed Bell Peppers Skillet",
+            "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
             "time_minutes": 45,
             "prep_time_minutes": 15,
             "cook_time_minutes": 30,
@@ -3917,8 +3282,8 @@
               },
               {
                 "name": "eggs",
-                "amount_per_portion": "1 egg",
-                "total_amount": "4 eggs",
+                "amount_per_portion": "1 egg (about 50 g)",
+                "total_amount": "4 eggs (about 200 g)",
                 "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
               },
               {
@@ -3940,7 +3305,7 @@
               "pepper"
             ],
             "steps": [
-              "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+              "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
               "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
               "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
               "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
@@ -3958,29 +3323,17 @@
               "note": "Approximate estimate only, not medical advice."
             },
             "goal_fit": "Good fit for healthy using rough nutrition estimates.",
-            "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long.",
             "safety_warnings": [
               "Check packaged ingredients for hidden dairy before cooking."
             ]
           }
         ],
         "steps_run": [
-          "vision",
           "constraints",
           "recipe_planner",
-          "recipe_review",
-          "final_writer"
+          "final_recipe"
         ],
         "hermes_trace": [
-          {
-            "step_name": "vision",
-            "agent_name": "Vision Stage",
-            "action": "call_agent",
-            "handoff_payload": {
-              "input": "no image; using demo fallback"
-            },
-            "decision_note": "Run image detection and ingredient verification once, keeping uncertainty out of confirmed planning."
-          },
           {
             "step_name": "constraints",
             "agent_name": "Constraint Stage",
@@ -3990,7 +3343,7 @@
                 "ingredients": [
                   {
                     "name": "chicken breast",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -3999,7 +3352,7 @@
                   },
                   {
                     "name": "eggs",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4008,7 +3361,7 @@
                   },
                   {
                     "name": "cooked rice",
-                    "category": "confirmed",
+                    "category": "grain",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4017,7 +3370,7 @@
                   },
                   {
                     "name": "spinach",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4026,7 +3379,7 @@
                   },
                   {
                     "name": "tomatoes",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4035,7 +3388,7 @@
                   },
                   {
                     "name": "cheddar cheese",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4044,7 +3397,7 @@
                   },
                   {
                     "name": "greek yogurt",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4053,7 +3406,7 @@
                   },
                   {
                     "name": "bell pepper",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4061,9 +3414,7 @@
                     "uncertainty_note": null
                   }
                 ],
-                "clarification_questions": [
-                  "I detected white container on top shelf. What is it?"
-                ]
+                "clarification_questions": []
               },
               "raw_user_preferences": {
                 "goal": "healthy",
@@ -4093,7 +3444,7 @@
                 ]
               }
             },
-            "decision_note": "Validate user preferences and constraints before recipe planning."
+            "decision_note": "Validate preferences, portions, allergies, time, and tools before planning."
           },
           {
             "step_name": "recipe_planner",
@@ -4104,7 +3455,7 @@
                 "ingredients": [
                   {
                     "name": "chicken breast",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4113,7 +3464,7 @@
                   },
                   {
                     "name": "eggs",
-                    "category": "confirmed",
+                    "category": "protein",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4122,7 +3473,7 @@
                   },
                   {
                     "name": "cooked rice",
-                    "category": "confirmed",
+                    "category": "grain",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4131,7 +3482,7 @@
                   },
                   {
                     "name": "spinach",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4140,7 +3491,7 @@
                   },
                   {
                     "name": "tomatoes",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4149,7 +3500,7 @@
                   },
                   {
                     "name": "cheddar cheese",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4158,7 +3509,7 @@
                   },
                   {
                     "name": "greek yogurt",
-                    "category": "confirmed",
+                    "category": "dairy",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4167,7 +3518,7 @@
                   },
                   {
                     "name": "bell pepper",
-                    "category": "confirmed",
+                    "category": "vegetable",
                     "quantity": null,
                     "confidence": 1.0,
                     "use_soon": false,
@@ -4175,9 +3526,7 @@
                     "uncertainty_note": null
                   }
                 ],
-                "clarification_questions": [
-                  "I detected white container on top shelf. What is it?"
-                ]
+                "clarification_questions": []
               },
               "preferences": {
                 "goal": "healthy",
@@ -4189,6 +3538,7 @@
                 "meals_needed": 4,
                 "meal_type": "meal_prep",
                 "constraint_resolution": "make_best_effort",
+                "gender": "none",
                 "height_cm": 180,
                 "weight_kg": 82,
                 "available_tools": [
@@ -4196,279 +3546,207 @@
                   "oven"
                 ]
               },
-              "constraint_warnings": []
-            },
-            "decision_note": "Plan recipes from verified ingredients and normalized preferences only."
-          },
-          {
-            "step_name": "recipe_review",
-            "agent_name": "Recipe Review Stage",
-            "action": "call_agent",
-            "handoff_payload": {
-              "recipe_candidates": [
+              "constraint_warnings": [],
+              "retrieved_recipe_references": [
                 {
-                  "title": "Meal Prep Stuffed Bell Peppers Skillet",
-                  "time_minutes": 45,
-                  "prep_time_minutes": 15,
-                  "cook_time_minutes": 30,
-                  "portions": 4,
-                  "ingredients_used": [
-                    "chicken breast",
-                    "eggs",
-                    "cooked rice",
-                    "spinach"
+                  "title": "Stuffed Bell Peppers",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "4 large bell peppers (any color)",
+                    "1 tsp. olive oil",
+                    "2 medium tomatoes, chopped",
+                    "1 medium squash, diced (yellow)",
+                    "1 medium zucchini, diced",
+                    "1/2 c. onion, diced",
+                    "2 medium cloves garlic, minced",
+                    "2 c. cooked brown rice"
                   ],
-                  "ingredient_amounts": [
-                    {
-                      "name": "chicken breast",
-                      "amount_per_portion": "120 g",
-                      "total_amount": "480 g",
-                      "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "4 eggs",
-                      "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "cooked rice",
-                      "amount_per_portion": "75 g",
-                      "total_amount": "300 g",
-                      "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "spinach",
-                      "amount_per_portion": "80 g",
-                      "total_amount": "320 g",
-                      "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                    }
-                  ],
-                  "missing_ingredients": [
-                    "olive oil",
-                    "salt",
-                    "pepper"
-                  ],
-                  "steps": [
-                    "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
-                    "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
-                    "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
-                    "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
-                    "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-                  ],
-                  "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
+                  "directions": [
+                    "Preheat oven to 375\u00b0. Cut peppers in half lengthwise. Remove stems, rubs and seeds. Heat oil in a large skillet over medium heat, swirling to cover bottom. Saut crookneck squash, zucchini, onion and garlic until zucchini is tender-crisp (about 4 minutes). Don't overcook. In a medium bowl, combine rice and cheese. Gently stir into skillet. Stuff pepper halves with vegetable mixture. Place in a 9-inch casserole dish. Carefully pour tomato sauce around peppers. Bake, uncovered, for 30 minutes. Serves 8."
+                  ]
                 },
                 {
-                  "title": "Meal Prep Chicken Breast Bowl",
-                  "time_minutes": 30,
-                  "prep_time_minutes": 10,
-                  "cook_time_minutes": 20,
-                  "portions": 4,
-                  "ingredients_used": [
-                    "chicken breast",
-                    "eggs",
-                    "cooked rice"
+                  "title": "Spinach-Rice Casserole",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "3/4 c. brown rice",
+                    "2 c. vegetable broth",
+                    "1/2 c. grated Cheddar cheese",
+                    "2 Tbsp. minced fresh parsley",
+                    "1 lb. fresh spinach, washed and chopped",
+                    "1/4 tsp. garlic powder",
+                    "1/4 tsp. black pepper",
+                    "2 eggs, beaten"
                   ],
-                  "ingredient_amounts": [
-                    {
-                      "name": "chicken breast",
-                      "amount_per_portion": "120 g",
-                      "total_amount": "480 g",
-                      "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "eggs",
-                      "amount_per_portion": "1 egg",
-                      "total_amount": "4 eggs",
-                      "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                    },
-                    {
-                      "name": "cooked rice",
-                      "amount_per_portion": "75 g",
-                      "total_amount": "300 g",
-                      "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                    }
+                  "directions": [
+                    "Cook for 40 minutes the brown rice and vegetable broth. Prepare the Cheddar cheese, parsley and fresh spinach while rice is cooking.",
+                    "After rice has cooked 30 minutes, preheat oven to 350\u00b0. Mix cooked rice with the Cheddar cheese mixture adding garlic powder, black pepper and eggs.",
+                    "Spoon mixture into greased casserole dish."
+                  ]
+                },
+                {
+                  "title": "Tortilla Soup",
+                  "score": 20.0,
+                  "source": "recipes_data.csv",
+                  "ingredients": [
+                    "1 Tbsp. vegetable oil",
+                    "12 corn tortillas, cut in strips",
+                    "2 Tbsp. chili powder",
+                    "1/2 tsp. cayenne pepper",
+                    "1 Tbsp. paprika",
+                    "1 1/2 Tbsp. cumin",
+                    "1 Tbsp. garlic, chopped",
+                    "2 bay leaves"
                   ],
-                  "missing_ingredients": [
-                    "lemon juice or vinegar",
-                    "black pepper"
-                  ],
-                  "steps": [
-                    "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
-                    "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
-                    "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
-                    "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                  ],
-                  "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
+                  "directions": [
+                    "Heat vegetable oil in a large pot set over medium-high heat. Add the tortillas, chili powder, cayenne pepper, paprika, cumin, garlic and bay leaves and saute for 10 minutes.",
+                    "Add onion, red bell pepper and cilantro; cook 5 minutes.",
+                    "Add tomatoes and cook 5 minutes."
+                  ]
+                }
+              ]
+            },
+            "decision_note": "Plan recipes, calculate portions, retrieve RAG references, and rank rough nutrition."
+          },
+          {
+            "step_name": "final_recipe",
+            "agent_name": "Final Recipe Stage",
+            "action": "call_agent",
+            "handoff_payload": {
+              "ranked_recipes": [
+                {
+                  "candidate": {
+                    "title": "Meal Prep Chicken Breast Bowl",
+                    "description": "A quick warm bowl built around chicken breast, finished with a splash of something tangy so it tastes fresh, not like leftovers.",
+                    "time_minutes": 30,
+                    "prep_time_minutes": 10,
+                    "cook_time_minutes": 20,
+                    "portions": 4,
+                    "ingredients_used": [
+                      "chicken breast",
+                      "eggs",
+                      "cooked rice"
+                    ],
+                    "ingredient_amounts": [
+                      {
+                        "name": "chicken breast",
+                        "amount_per_portion": "120 g",
+                        "total_amount": "480 g",
+                        "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "4 eggs (about 200 g)",
+                        "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "cooked rice",
+                        "amount_per_portion": "75 g",
+                        "total_amount": "300 g",
+                        "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
+                      }
+                    ],
+                    "missing_ingredients": [
+                      "lemon juice or vinegar",
+                      "black pepper"
+                    ],
+                    "steps": [
+                      "Measure the bowl base: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice.",
+                      "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
+                      "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
+                      "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
+                    ]
+                  },
+                  "nutrition": {
+                    "calories": 512,
+                    "protein_g": 46,
+                    "carbs_g": 30,
+                    "fat_g": 18,
+                    "calories_total": 2048,
+                    "protein_total_g": 184,
+                    "estimated_daily_calorie_need": 2460,
+                    "goal_note": "Per portion estimate: 512 kcal and 46 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: healthy.",
+                    "note": "Approximate estimate only, not medical advice."
+                  },
+                  "goal_fit": "Good fit for healthy using rough nutrition estimates.",
+                  "rank_score": 50.0
+                },
+                {
+                  "candidate": {
+                    "title": "Meal Prep Stuffed Bell Peppers Skillet",
+                    "description": "Everything cooked together in one pan: chicken breast, eggs, cooked rice with simple seasoning, ready in about 45 minutes.",
+                    "time_minutes": 45,
+                    "prep_time_minutes": 15,
+                    "cook_time_minutes": 30,
+                    "portions": 4,
+                    "ingredients_used": [
+                      "chicken breast",
+                      "eggs",
+                      "cooked rice",
+                      "spinach"
+                    ],
+                    "ingredient_amounts": [
+                      {
+                        "name": "chicken breast",
+                        "amount_per_portion": "120 g",
+                        "total_amount": "480 g",
+                        "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "eggs",
+                        "amount_per_portion": "1 egg (about 50 g)",
+                        "total_amount": "4 eggs (about 200 g)",
+                        "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "cooked rice",
+                        "amount_per_portion": "75 g",
+                        "total_amount": "300 g",
+                        "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
+                      },
+                      {
+                        "name": "spinach",
+                        "amount_per_portion": "80 g",
+                        "total_amount": "320 g",
+                        "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
+                      }
+                    ],
+                    "missing_ingredients": [
+                      "olive oil",
+                      "salt",
+                      "pepper"
+                    ],
+                    "steps": [
+                      "Measure the ingredients: 480 g chicken breast, 4 eggs (about 200 g) eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
+                      "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
+                      "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
+                      "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
+                      "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
+                    ]
+                  },
+                  "nutrition": {
+                    "calories": 542,
+                    "protein_g": 47,
+                    "carbs_g": 36,
+                    "fat_g": 18,
+                    "calories_total": 2168,
+                    "protein_total_g": 188,
+                    "estimated_daily_calorie_need": 2460,
+                    "goal_note": "Per portion estimate: 542 kcal and 47 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: healthy.",
+                    "note": "Approximate estimate only, not medical advice."
+                  },
+                  "goal_fit": "Good fit for healthy using rough nutrition estimates.",
+                  "rank_score": 35.0
                 }
               ],
-              "preferences": {
-                "goal": "healthy",
-                "allergies": [
-                  "dairy"
-                ],
-                "diet_style": "dairy_free",
-                "max_cooking_time_minutes": 45,
-                "meals_needed": 4,
-                "meal_type": "meal_prep",
-                "constraint_resolution": "make_best_effort",
-                "height_cm": 180,
-                "weight_kg": 82,
-                "available_tools": [
-                  "pan",
-                  "oven"
-                ]
-              },
               "allergies": [
                 "dairy"
               ]
             },
-            "decision_note": "Rank recipes with approximate nutrition and apply allergy safety review."
-          },
-          {
-            "step_name": "final_writer",
-            "agent_name": "Final Writer Stage",
-            "action": "call_agent",
-            "handoff_payload": {
-              "safe_recipes": [
-                {
-                  "ranked_recipe": {
-                    "candidate": {
-                      "title": "Meal Prep Chicken Breast Bowl",
-                      "time_minutes": 30,
-                      "prep_time_minutes": 10,
-                      "cook_time_minutes": 20,
-                      "portions": 4,
-                      "ingredients_used": [
-                        "chicken breast",
-                        "eggs",
-                        "cooked rice"
-                      ],
-                      "ingredient_amounts": [
-                        {
-                          "name": "chicken breast",
-                          "amount_per_portion": "120 g",
-                          "total_amount": "480 g",
-                          "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "eggs",
-                          "amount_per_portion": "1 egg",
-                          "total_amount": "4 eggs",
-                          "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "cooked rice",
-                          "amount_per_portion": "75 g",
-                          "total_amount": "300 g",
-                          "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                        }
-                      ],
-                      "missing_ingredients": [
-                        "lemon juice or vinegar",
-                        "black pepper"
-                      ],
-                      "steps": [
-                        "Measure the bowl base: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice.",
-                        "Prep chicken breast first: slice thin if it is firm, chop bite-size if it is tender, or keep it whole only if it is already cooked.",
-                        "Warm the cooked grain or beans in a covered pan with 2 tablespoons water for 4 to 6 minutes, stirring halfway; add tender vegetables at the end so they soften without collapsing.",
-                        "Divide into 4 meal prep portion(s), then finish each portion with a small splash of lemon juice or vinegar and black pepper."
-                      ],
-                      "food_waste_note": "Turns small leftover portions into a fast meal instead of letting them expire."
-                    },
-                    "nutrition": {
-                      "calories": 512,
-                      "protein_g": 46,
-                      "carbs_g": 30,
-                      "fat_g": 18,
-                      "calories_total": 2048,
-                      "protein_total_g": 184,
-                      "estimated_daily_calorie_need": 2460,
-                      "goal_note": "Per portion estimate: 512 kcal and 46 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: healthy.",
-                      "note": "Approximate estimate only, not medical advice."
-                    },
-                    "goal_fit": "Good fit for healthy using rough nutrition estimates.",
-                    "rank_score": 50.0
-                  },
-                  "safety_warnings": [
-                    "Check packaged ingredients for hidden dairy before cooking."
-                  ]
-                },
-                {
-                  "ranked_recipe": {
-                    "candidate": {
-                      "title": "Meal Prep Stuffed Bell Peppers Skillet",
-                      "time_minutes": 45,
-                      "prep_time_minutes": 15,
-                      "cook_time_minutes": 30,
-                      "portions": 4,
-                      "ingredients_used": [
-                        "chicken breast",
-                        "eggs",
-                        "cooked rice",
-                        "spinach"
-                      ],
-                      "ingredient_amounts": [
-                        {
-                          "name": "chicken breast",
-                          "amount_per_portion": "120 g",
-                          "total_amount": "480 g",
-                          "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "eggs",
-                          "amount_per_portion": "1 egg",
-                          "total_amount": "4 eggs",
-                          "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "cooked rice",
-                          "amount_per_portion": "75 g",
-                          "total_amount": "300 g",
-                          "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                        },
-                        {
-                          "name": "spinach",
-                          "amount_per_portion": "80 g",
-                          "total_amount": "320 g",
-                          "notes": "Calculated for 4 portion(s): per-portion amount multiplied by requested portions."
-                        }
-                      ],
-                      "missing_ingredients": [
-                        "olive oil",
-                        "salt",
-                        "pepper"
-                      ],
-                      "steps": [
-                        "Measure the ingredients: 480 g chicken breast, 4 eggs eggs, 300 g cooked rice, 320 g spinach for 4 portion(s).",
-                        "Cut firm vegetables or proteins from chicken breast, eggs, cooked rice, spinach into 1 to 2 cm bite-size pieces so they cook evenly; leave delicate greens larger because they wilt quickly.",
-                        "Heat a wide pan over medium heat for 2 minutes, then add 1 tablespoon oil per 4 portions.",
-                        "Add chicken pieces first and keep the pieces in one even layer; cook on medium-high heat for 4 to 5 minutes per side for 1 to 2 cm pieces, or 7 to 8 minutes per side for whole thicker pieces. Chicken is ready when no pink remains in the center and the juices run clear.",
-                        "Fold spinach or delicate greens in during the final 60 to 90 seconds only, then season with salt and pepper. Serve immediately or divide into 4 meal prep portion(s)."
-                      ],
-                      "food_waste_note": "Uses chicken breast, eggs before they sit in the fridge too long."
-                    },
-                    "nutrition": {
-                      "calories": 542,
-                      "protein_g": 47,
-                      "carbs_g": 36,
-                      "fat_g": 18,
-                      "calories_total": 2168,
-                      "protein_total_g": 188,
-                      "estimated_daily_calorie_need": 2460,
-                      "goal_note": "Per portion estimate: 542 kcal and 47 g protein. For high-protein planning, a rough daily protein reference could be about 131 g based on weight. Height and weight were used only as rough context, not as a medical target. Goal selected: healthy.",
-                      "note": "Approximate estimate only, not medical advice."
-                    },
-                    "goal_fit": "Good fit for healthy using rough nutrition estimates.",
-                    "rank_score": 35.0
-                  },
-                  "safety_warnings": [
-                    "Check packaged ingredients for hidden dairy before cooking."
-                  ]
-                }
-              ]
-            },
-            "decision_note": "Write final cards only after allergy safety has reviewed the ranked recipes."
+            "decision_note": "Apply allergy safety and write final cards."
           }
         ]
       }

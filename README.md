@@ -1,14 +1,15 @@
 # 🍳 FridgeAgent
 
-**A fridge-to-recipe assistant for people who love food too much to waste it.**
+**Spend less time deciding what to cook and get straight to the good part.**
 
 Snap photos of your fridge, answer three friendly questions, and a four-agent AI
-workflow turns what you actually have into real, cookable recipes — with exact
-amounts for your portions and steps a tired human can follow at 9pm.
+workflow handles the meal-idea thinking and turns what you actually have into
+real, cookable recipes — with exact amounts, estimated calories per portion,
+and steps a tired human can follow at 9pm.
 
 Built up for the [DEV Weekend Challenge: Passion Edition](https://dev.to/challenges/weekend-2026-07-09).
-Our take on passion: the everyday kind — loving food enough to cook with what
-you've got instead of letting it expire.
+Our take on passion: love the cooking, not the deciding — FridgeAgent saves
+your time and mental energy so you can get straight to the pan.
 
 ![FridgeAgent welcome screen](screenshots/01_welcome.png)
 
