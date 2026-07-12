@@ -98,6 +98,15 @@ Return only JSON with this exact shape:
 Do not invent hidden ingredients. If unsure, use lower confidence and add the item to uncertain_items.
 Separate visible-object confidence from ingredient certainty by using lower confidence for unclear packages.
 """
+    image_size = _image_byte_size(image)
+    if image_size == 0:
+        return IngredientExtractionResponse(
+            ingredients=[],
+            uncertain_items=[
+                "The uploaded photo data was empty. Please re-upload the photo or type your products."
+            ],
+        )
+
     raw_response = ""
     error: Exception | None = None
     result: IngredientExtractionResponse | None = None
@@ -108,7 +117,7 @@ Separate visible-object confidence from ingredient certainty by using lower conf
         except (RuntimeError, ValueError) as exc:
             error = exc
 
-    _log_detection_telemetry(settings, watch.elapsed_ms, raw_response, result, error)
+    _log_detection_telemetry(settings, watch.elapsed_ms, raw_response, result, error, image_size)
     if result is not None:
         return result
     return IngredientExtractionResponse(
@@ -119,18 +128,32 @@ Separate visible-object confidence from ingredient certainty by using lower conf
     )
 
 
+def _image_byte_size(image: Any) -> int | None:
+    """Best-effort size of the uploaded image payload, to catch lost/empty uploads."""
+    if isinstance(image, bytes):
+        return len(image)
+    if hasattr(image, "getvalue"):
+        try:
+            return len(image.getvalue())
+        except (OSError, ValueError):
+            return 0
+    return None
+
+
 def _log_detection_telemetry(
     settings: Any,
     latency_ms: float,
     raw_response: str,
     result: IngredientExtractionResponse | None,
     error: Exception | None,
+    image_size: int | None = None,
 ) -> None:
     """Record one vision-detection data point so model quality can be tracked over time."""
     confidences = [ingredient.confidence for ingredient in result.ingredients] if result else []
     log_event(
         "vision_detection",
         {
+            "image_bytes": image_size,
             "app_mode": settings.app_mode,
             "model": settings.gemma_model_name if settings.app_mode == "local" else getattr(settings, "google_model_name", ""),
             "latency_ms": latency_ms,

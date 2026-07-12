@@ -144,9 +144,13 @@ def render_step_ingredients() -> None:
             if len(photos) > 5:
                 st.error("Five photos max, please!")
             else:
-                st.session_state.uploaded_photos = photos
-                st.image(photos, width=160)
-                ready = True
+                # Copy the raw bytes now: Streamlit frees uploaded files once
+                # the uploader widget leaves the screen on the next steps.
+                st.session_state.uploaded_photos = [photo.getvalue() for photo in photos]
+        if st.session_state.uploaded_photos:
+            st.image(st.session_state.uploaded_photos, width=160)
+            st.caption(f"{len(st.session_state.uploaded_photos)} photo(s) locked in ✅")
+            ready = True
         if os.getenv("APP_MODE", "local").lower() == "mock":
             st.warning("Demo mode can't look at photos — type your products instead.")
     elif mode == "typed":
@@ -253,6 +257,7 @@ def render_step_details() -> None:
         else:
             raw_preferences["confirmed_ingredients"] = SURPRISE_INGREDIENTS
 
+        st.session_state.last_preferences = raw_preferences
         with st.spinner("👨‍🍳 Cooking up ideas... local model runs can take a minute or two."):
             result = run_fridge_agent_workflow(images, raw_preferences, monitor=add_monitor_event)
         st.session_state.latest_result = result
@@ -285,7 +290,38 @@ def render_results() -> None:
             st.error("We couldn't figure out your ingredients — the photo detection came back empty.")
             for question in result.verified_ingredients.clarification_questions:
                 st.warning(question)
-            st.info("Go back to step 1 and type your products — that always works.")
+            st.markdown("**Quick fix — just tell me what you've got:**")
+            quick_products = st.text_input(
+                "Your products", placeholder="e.g. chicken, rice, onion, tomatoes",
+                label_visibility="collapsed",
+            )
+            if quick_products.strip() and st.button("🍳 Cook with these instead", type="primary"):
+                preferences = dict(
+                    st.session_state.get("last_preferences")
+                    or {
+                        "goal": st.session_state.goal or "quick",
+                        "allergies": [],
+                        "diet_style": "normal",
+                        "max_cooking_time_minutes": 30,
+                        "meals_needed": 2,
+                        "meal_type": st.session_state.meal_type or "dinner",
+                        "constraint_resolution": "make_best_effort",
+                        "available_tools": ["pan", "pot", "oven"],
+                    }
+                )
+                preferences["confirmed_ingredients"] = [
+                    item.strip()
+                    for item in re.split(r"[,;\r\n]+", quick_products)
+                    if item.strip()
+                ]
+                st.session_state.ingredient_mode = "typed"
+                st.session_state.typed_ingredients = quick_products
+                st.session_state.monitor_events = []
+                with st.spinner("👨‍🍳 Cooking up ideas..."):
+                    retry = run_fridge_agent_workflow(None, preferences, monitor=add_monitor_event)
+                st.session_state.latest_result = retry
+                st.session_state.latest_result_json = retry.model_dump_json(indent=2)
+                st.rerun()
         else:
             st.error(
                 "No safe recipes fit these constraints. Try more time, fewer portions, "
