@@ -27,7 +27,7 @@ def get_settings() -> Settings:
         gemma_model_name=os.getenv("GEMMA_MODEL_NAME", "gemma4:e4b"),
         ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         google_api_key=os.getenv("GOOGLE_API_KEY"),
-        google_model_name=os.getenv("GOOGLE_MODEL_NAME", "gemini-2.0-flash"),
+        google_model_name=os.getenv("GOOGLE_MODEL_NAME", "gemini-3.5-flash"),
         ollama_timeout_seconds=int(os.getenv("OLLAMA_TIMEOUT_SECONDS", "300")),
         # Separate model for photo analysis; defaults to the main model.
         vision_model_name=os.getenv("VISION_MODEL_NAME", os.getenv("GEMMA_MODEL_NAME", "gemma4:e4b")),

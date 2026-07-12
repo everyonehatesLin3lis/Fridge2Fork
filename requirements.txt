@@ -3,5 +3,7 @@ pydantic>=2.7
 python-dotenv>=1.0
 pytest>=8.0
 kagglehub>=1.0
+starlette>=0.37
+uvicorn[standard]>=0.30
 # Only required for APP_MODE=google
 google-genai>=1.0

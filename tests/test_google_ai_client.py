@@ -16,6 +16,12 @@ def test_google_mode_requires_api_key() -> None:
         GemmaClient().generate_text("hello")
 
 
+def test_google_mode_uses_current_stable_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("GOOGLE_MODEL_NAME", raising=False)
+
+    assert GemmaClient().settings.google_model_name == "gemini-3.5-flash"
+
+
 def test_google_mode_wraps_provider_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     from google import genai
 

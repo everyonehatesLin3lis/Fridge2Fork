@@ -11,9 +11,7 @@ Built up for the [DEV Weekend Challenge: Passion Edition](https://dev.to/challen
 Our take on passion: love the cooking, not the deciding — FridgeAgent saves
 your time and mental energy so you can get straight to the pan.
 
-**Challenge links:** [DEV Weekend Challenge](https://dev.to/challenges/weekend-2026-07-09)
-· [Ready-to-publish DEV submission](submission/dev_post_draft.md)
-· [30-second demo script](submission/demo_script.md)
+**Challenge:** [DEV Weekend Challenge: Passion Edition](https://dev.to/challenges/weekend-2026-07-09)
 
 ![FridgeAgent welcome screen](screenshots/01_welcome.png)
 
@@ -252,14 +250,19 @@ scoring, ~0.8s mean retrieval). Build it with:
 .\.venv\Scripts\python.exe scripts\build_recipe_rag_index.py --dataset-path "PATH_PRINTED_BY_DOWNLOAD" --limit 25000
 ```
 
-The app works without the index — recipes are just less varied.
+The app works without the index — recipes are just less varied. The dataset is
+not included in this repository. It is licensed separately under
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) with
+additional terms on its
+[Kaggle dataset page](https://www.kaggle.com/datasets/wilmerarltstrmberg/recipe-dataset-over-2m);
+review those terms before downloading or using it.
 
 ## Modes
 
 | Mode | What it does |
 |---|---|
 | `APP_MODE=local` (default) | Recipes via `GEMMA_MODEL_NAME` (`gemma4:e4b`), photos via `VISION_MODEL_NAME` (`llava:7b`), both through Ollama |
-| `APP_MODE=google` | Everything through the real Gemini API (`google-genai` SDK, default `gemini-2.0-flash`). Free key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey). No local GPU needed |
+| `APP_MODE=google` | Everything through the real Gemini API (`google-genai` SDK, default `gemini-3.5-flash`). Free key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey). No local GPU needed |
 | `APP_MODE=mock` | Deterministic demo flow, no model calls at all |
 
 Copy `.env.example` to `.env` to configure. Manual start, if you prefer it over
@@ -272,13 +275,64 @@ pip install -r requirements.txt
 streamlit run main.py
 ```
 
+## Deploy on Google Cloud Run
+
+The repository includes a production `Dockerfile` and explicit Cloud Run
+ignore rules. Google mode keeps the Gemini API key on the server; it is never
+sent to the browser.
+
+Prerequisites: a Google Cloud project with billing enabled, the Google Cloud
+CLI, and a Gemini API key. The commands below use a dedicated runtime service
+account and Secret Manager so the key is not placed in source control or a
+plain deployment command.
+
+```powershell
+$PROJECT_ID = "your-google-cloud-project-id"
+$REGION = "europe-north1"
+$SERVICE_ACCOUNT = "fridgeagent-run@$PROJECT_ID.iam.gserviceaccount.com"
+
+gcloud auth login
+gcloud config set project $PROJECT_ID
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com
+
+gcloud iam service-accounts create fridgeagent-run --display-name="FridgeAgent Cloud Run"
+gcloud secrets create fridgeagent-google-api-key --replication-policy="automatic"
+$apiKey = Read-Host "Paste the Google AI API key"
+$tempSecret = [System.IO.Path]::GetTempFileName()
+[System.IO.File]::WriteAllBytes($tempSecret, [System.Text.Encoding]::UTF8.GetBytes($apiKey))
+gcloud secrets versions add fridgeagent-google-api-key --data-file=$tempSecret
+Remove-Item -LiteralPath $tempSecret
+Remove-Variable apiKey
+
+gcloud secrets add-iam-policy-binding fridgeagent-google-api-key `
+  --member="serviceAccount:$SERVICE_ACCOUNT" `
+  --role="roles/secretmanager.secretAccessor"
+
+gcloud run deploy fridgeagent `
+  --source . `
+  --region $REGION `
+  --allow-unauthenticated `
+  --service-account $SERVICE_ACCOUNT `
+  --set-env-vars "APP_MODE=google,GOOGLE_MODEL_NAME=gemini-3.5-flash" `
+  --set-secrets "GOOGLE_API_KEY=fridgeagent-google-api-key:1" `
+  --memory 1Gi `
+  --concurrency 4 `
+  --max-instances 2 `
+  --timeout 300
+```
+
+For a public demo, set conservative Gemini API quotas and billing alerts before
+sharing the URL. `--max-instances 2` limits Cloud Run scaling but does not cap
+Gemini API spend. If the app should be private, remove
+`--allow-unauthenticated`.
+
 ## Tests
 
 ```powershell
 pytest
 ```
 
-52 tests: agent workflow in mock mode, RAG retrieval correctness and latency
+53 tests: agent workflow in mock mode, RAG retrieval correctness and latency
 budgets, telemetry collection, Google AI client, JSON parsing edge cases, and
 the primary web experience's decision-time and calories-per-portion copy.
 
@@ -306,3 +360,9 @@ one-command launcher, the LLM telemetry + ops report + CI pipeline, the entire
 vision debugging saga and dedicated-vision-model fix, recipe variety on
 refresh, must-use added products, chat-triggered recipe refreshes, and the
 Google AI provider.
+
+## License
+
+FridgeAgent's source code and original project assets are available under the
+[MIT License](LICENSE). Third-party packages and the optional recipe dataset
+remain under their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

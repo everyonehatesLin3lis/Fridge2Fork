@@ -6,6 +6,7 @@ __pycache__/
 .streamlit/
 data/recipe_rag_index.jsonl
 data/telemetry/
+submission/
 test_photos/
 .claude/
 screenshots/.tmp/
