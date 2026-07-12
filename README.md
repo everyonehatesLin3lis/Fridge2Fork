@@ -10,6 +10,8 @@ Built up for the [DEV Weekend Challenge: Passion Edition](https://dev.to/challen
 Our take on passion: the everyday kind — loving food enough to cook with what
 you've got instead of letting it expire.
 
+![FridgeAgent welcome screen](screenshots/01_welcome.png)
+
 ## Run It (One Command)
 
 Double-click **`run.bat`**. That's the whole setup:
@@ -35,6 +37,20 @@ Optional: `run.bat --mock`, `run.bat --google`, `run.bat --local`.
 5. Tell the chat *"I'm buying blended beef"* → the cards refresh in place with
    recipes built around blended beef. Or hit **🎲 Show me different recipes**
    for a fresh batch from the same fridge.
+
+| Pick the occasion | Get your recipes |
+|---|---|
+| ![Occasion step](screenshots/03_occasion.png) | ![Recipe cards](screenshots/06_recipes.png) |
+
+<details>
+<summary>📸 More screenshots</summary>
+
+![Typed products](screenshots/02_typed_products.png)
+![Craving step](screenshots/04_vibe.png)
+![Details step](screenshots/05_details.png)
+![Full results page](screenshots/07_recipes_full.png)
+
+</details>
 
 ---
 
@@ -171,11 +187,43 @@ Photos / typed products
    -> Recipe cards + optional external Hermes Agent audit
 ```
 
-Handoffs are controlled by `HermesOrchestrator` — a deterministic Python
-message-passing layer, not another LLM. It enforces a fixed four-stage order,
-prevents loops, and keeps a trace you can inspect in the "Behind the scenes"
-expander. One hard rule: **if no ingredients can be verified, the pipeline
-stops** — the planner is never allowed to invent what's in your fridge.
+### Why Hermes, and what it improved
+
+Handoffs are controlled by `HermesOrchestrator`
+([src/orchestration/hermes.py](src/orchestration/hermes.py)) — a deterministic
+Python message-passing layer, **not another LLM**. That is a deliberate choice.
+
+The obvious multi-agent design is to let a model decide which agent runs next.
+We tried the obvious design's failure modes so you don't have to imagine them:
+an LLM router adds a full model call *per handoff* (on a local 8B model that's
+30–60 seconds of pure overhead per hop), it occasionally re-runs stages or
+skips them, and when something breaks you're debugging a conversation instead
+of a call stack.
+
+Hermes replaces all of that with boring, fast Python:
+
+- **Fixed four-stage order** — vision → constraints → planner → final writer.
+  No stage can run twice, no loops are possible by construction.
+- **Zero routing latency** — handoffs cost microseconds, so the only model
+  time spent is on actual work (seeing food, planning recipes). In practice
+  this cut a full local run from "several minutes, sometimes" to a
+  predictable ~60–90s dominated by the planner call.
+- **Clean payloads** — each stage receives only the structured data it needs
+  (the planner never sees raw photos; the final writer never sees RAG dumps),
+  which keeps prompts small and inside the local model's context window.
+- **A hard safety gate** — if no ingredients can be verified, Hermes stops the
+  pipeline. The planner is never allowed to invent what's in your fridge.
+- **An inspectable trace** — every handoff is recorded and shown in the
+  "Behind the scenes" expander, which is how the bugs in the journey above
+  were localized to specific stages instead of "somewhere in the AI".
+
+There's also a second, separate Hermes: an optional **external audit layer**
+that calls the Nous Research Hermes Agent CLI (`hermes chat -Q -q`) with the
+generated workflow JSON, acting as an independent critic that checks whether
+the recipes can physically be cooked — portion math, missing binders/bases,
+allergy risks. The orchestrator controls the workflow; the audit questions its
+output. (If the CLI isn't installed, the app shows setup guidance and a
+deterministic fallback audit instead.)
 
 Safety details we care about: ingredients detected below 0.5 confidence are
 never cooked with silently — the app asks you to confirm them ("possibly

@@ -23,6 +23,62 @@ os.environ.setdefault("VISION_MODEL_NAME", "llava:7b")
 
 SURPRISE_INGREDIENTS = ["eggs", "pasta", "rice", "onion", "tomatoes", "cheese"]
 
+PLAYFUL_CSS = """
+<style>
+/* Buttons: rounded, springy hover */
+.stButton > button, .stFormSubmitButton > button {
+    border-radius: 14px;
+    font-weight: 600;
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+.stButton > button:hover, .stFormSubmitButton > button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(255, 107, 107, .30);
+}
+.stButton > button:active, .stFormSubmitButton > button:active {
+    transform: translateY(0) scale(.98);
+}
+/* Recipe cards: soft lift on hover */
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    border-radius: 18px;
+    transition: box-shadow .18s ease, transform .18s ease;
+}
+div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .10);
+    transform: translateY(-2px);
+}
+/* Floating emoji in headings */
+@keyframes floaty {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-7px) rotate(-6deg); }
+}
+.floaty {
+    display: inline-block;
+    animation: floaty 2.2s ease-in-out infinite;
+}
+/* Warm gradient progress bar */
+div[data-testid="stProgress"] div[role="progressbar"] > div {
+    background-image: linear-gradient(90deg, #ff6b6b, #ffa94d);
+}
+/* Metric chips */
+div[data-testid="stMetric"] {
+    background: rgba(255, 169, 77, .08);
+    border-radius: 14px;
+    padding: 10px 14px;
+}
+</style>
+"""
+
+TIME_OPTIONS = [30, 60, 90, 120, 150, 180, 210, 240]
+
+
+def format_cooking_time(minutes: int) -> str:
+    if minutes < 60:
+        return f"{minutes} min"
+    if minutes % 60 == 0:
+        return f"{minutes // 60} h"
+    return f"{minutes // 60}:{minutes % 60:02d} h"
+
 MEAL_OPTIONS = [
     ("breakfast", "🍳 Breakfast"),
     ("lunch", "🥪 Lunch"),
@@ -52,6 +108,7 @@ def init_state() -> None:
         "chat_messages": [],
         "latest_result": None,
         "latest_result_json": None,
+        "celebrate": False,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -97,7 +154,11 @@ def add_monitor_event(agent_name: str, message: str, details: dict | None = None
 
 def wizard_header(step: int, total: int, title: str, subtitle: str = "") -> None:
     st.progress(step / total, text=f"Step {step} of {total}")
-    st.title(title)
+    emoji, _, rest = title.partition(" ")
+    st.markdown(
+        f'<h1><span class="floaty">{emoji}</span> {rest}</h1>',
+        unsafe_allow_html=True,
+    )
     if subtitle:
         st.caption(subtitle)
 
@@ -215,8 +276,8 @@ def render_step_details() -> None:
         with col_a:
             portions = st.number_input("👥 How many portions?", min_value=1, max_value=14, value=2)
             max_time = st.select_slider("⏱️ How much time do you have?",
-                                        options=[15, 30, 45, 60, 90, 120], value=30,
-                                        format_func=lambda m: f"{m} min")
+                                        options=TIME_OPTIONS, value=30,
+                                        format_func=format_cooking_time)
             diet_style = st.selectbox("🥦 Any diet style?",
                                       ["normal", "vegetarian", "vegan", "gluten_free", "dairy_free"],
                                       format_func=lambda v: v.replace("_", " ").title())
@@ -268,6 +329,7 @@ def render_step_details() -> None:
             result = run_fridge_agent_workflow(images, raw_preferences, monitor=add_monitor_event)
         st.session_state.latest_result = result
         st.session_state.latest_result_json = result.model_dump_json(indent=2)
+        st.session_state.celebrate = bool(result.final_recipes)
         go_to_step(5)
 
 
@@ -339,6 +401,7 @@ def rerun_recipes(new_items: list[str] | None = None, spinner_text: str | None =
         )
     st.session_state.latest_result = result
     st.session_state.latest_result_json = result.model_dump_json(indent=2)
+    st.session_state.celebrate = bool(result.final_recipes)
     st.session_state.step = 5
     st.rerun()
 
@@ -385,7 +448,12 @@ def render_results() -> None:
         go_to_step(1)
         return
 
-    st.title("🍽️ Here's what you can make!")
+    if st.session_state.celebrate:
+        st.session_state.celebrate = False
+        st.balloons()
+        st.toast("Dinner is figured out! 🎉", icon="🍳")
+
+    st.markdown('<h1><span class="floaty">🍽️</span> Here\'s what you can make!</h1>', unsafe_allow_html=True)
     st.caption("Cooked from what you already have — less waste, more love. ❤️")
 
     col_restart, col_retry, col_reroll = st.columns(3)
@@ -570,6 +638,7 @@ def render_chat() -> None:
 # ---------------------------------------------------------------- Main
 
 st.set_page_config(page_title="FridgeAgent", page_icon="🍳", layout="wide")
+st.markdown(PLAYFUL_CSS, unsafe_allow_html=True)
 init_state()
 
 with st.sidebar:
